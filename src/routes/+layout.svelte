@@ -1,18 +1,12 @@
 <script lang="ts">
 	import favicon from '$lib/assets/favicon.svg';
-	import '../lib/styles/global.scss';
+	import '../lib/styles/global.css';
 
 	let { children } = $props();
 </script>
 
 <svelte:head>
 	<link rel="icon" href={favicon} />
-	<link rel="preconnect" href="https://fonts.googleapis.com" />
-	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
-	<link
-		href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
-		rel="stylesheet"
-	/>
 </svelte:head>
 
 <div class="app">
@@ -20,12 +14,12 @@
 		<div class="container">
 			<nav class="nav">
 				<div class="nav-brand">
-					<h1>Product Roadmap Planner</h1>
+					<h1>Product Roadmap</h1>
 				</div>
 				<div class="nav-links">
-					<a href="/" class="nav-link" data-sveltekit-preload-data>Dashboard</a>
-					<a href="/matrix" class="nav-link" data-sveltekit-preload-data>Priority Matrix</a>
-					<a href="/timeline" class="nav-link" data-sveltekit-preload-data>Timeline</a>
+					<a href="/" class="nav-link">Dashboard</a>
+					<a href="/matrix" class="nav-link">Matrix</a>
+					<a href="/timeline" class="nav-link">Timeline</a>
 				</div>
 			</nav>
 		</div>
@@ -38,7 +32,7 @@
 	</main>
 </div>
 
-<style lang="scss">
+<style>
 	.app {
 		min-height: 100vh;
 		display: flex;
@@ -46,12 +40,11 @@
 	}
 
 	.header {
-		background: white;
-		border-bottom: 1px solid var(--secondary-200);
-		box-shadow: var(--shadow-sm);
+		background: var(--color-bg);
+		border-bottom: 1px solid var(--color-border);
 		position: sticky;
 		top: 0;
-		z-index: var(--z-sticky);
+		z-index: 50;
 	}
 
 	.nav {
@@ -59,59 +52,51 @@
 		align-items: center;
 		justify-content: space-between;
 		padding: var(--space-4) 0;
-
-		@media (max-width: 767px) {
-			flex-direction: column;
-			gap: var(--space-4);
-			text-align: center;
-		}
 	}
 
-	.nav-brand {
-		h1 {
-			font-size: var(--font-size-xl);
-			font-weight: var(--font-weight-bold);
-			color: var(--primary-600);
-			margin: 0;
-		}
+	.nav-brand h1 {
+		font-size: var(--font-size-xl);
+		font-weight: 600;
+		color: var(--color-primary);
+		margin: 0;
 	}
 
 	.nav-links {
 		display: flex;
-		align-items: center;
 		gap: var(--space-6);
-
-		@media (max-width: 767px) {
-			gap: var(--space-4);
-		}
 	}
 
 	.nav-link {
-		font-size: var(--font-size-sm);
-		font-weight: var(--font-weight-medium);
-		color: var(--secondary-600);
+		color: var(--color-text-muted);
 		text-decoration: none;
 		padding: var(--space-2) var(--space-3);
-		border-radius: var(--radius-md);
-		transition: all var(--transition-fast);
+		border-radius: var(--radius);
+		font-weight: 500;
+		font-size: var(--font-size-sm);
+		transition: all 0.15s ease;
+	}
 
-		&:hover {
-			color: var(--primary-600);
-			background: var(--primary-50);
-			text-decoration: none;
-		}
-
-		&.active {
-			color: var(--primary-700);
-			background: var(--primary-100);
-		}
+	.nav-link:hover {
+		color: var(--color-text);
+		background: var(--gray-100);
 	}
 
 	.main {
 		flex: 1;
 		padding: var(--space-8) 0;
+	}
 
-		@media (max-width: 767px) {
+	@media (max-width: 768px) {
+		.nav {
+			flex-direction: column;
+			gap: var(--space-4);
+		}
+
+		.nav-links {
+			gap: var(--space-4);
+		}
+
+		.main {
 			padding: var(--space-6) 0;
 		}
 	}

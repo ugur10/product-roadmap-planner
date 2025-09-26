@@ -17,7 +17,7 @@
 	</div>
 </div>
 
-<style lang="scss">
+<style >
 	.page {
 		max-width: 1200px;
 		margin: 0 auto;

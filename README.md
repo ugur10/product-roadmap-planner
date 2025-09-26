@@ -1,6 +1,6 @@
-# Product Roadmap Planner 🗺️
+# Product Roadmap Planner
 
-A modern, interactive product roadmap planning tool built with SvelteKit 5, designed for product managers and development teams to strategically plan, prioritize, and visualize feature development.
+A lean, professional product roadmap planning tool built with SvelteKit 5. Designed for product managers and development teams who value speed, simplicity, and clean design.
 
 ## ✨ Features
 
@@ -62,38 +62,43 @@ Visit `http://localhost:5173` to see the application.
 
 - **Framework**: SvelteKit 5 with Svelte 5 runes
 - **Language**: TypeScript for type safety
-- **Styling**: SCSS with CSS Custom Properties
-- **Build Tool**: Vite for fast development and builds
-- **Package Manager**: Bun (with npm/yarn support)
+- **Styling**: Lean CSS with Custom Properties (no preprocessors)
+- **Build Tool**: Vite for lightning-fast development
+- **Package Manager**: Bun for speed
 - **Code Quality**: ESLint + Prettier
+
+## ⚡ Performance First
+
+- **No SASS/SCSS** - Pure CSS for faster builds
+- **Minimal dependencies** - Only what's essential
+- **System fonts** - No web font loading delays
+- **Fast dev server** - Starts in <1 second
+- **Lean bundle** - Optimized for performance
 
 ## 📁 Project Structure
 
 ```
 src/
 ├── lib/
-│   ├── components/       # Reusable UI components
-│   ├── stores/          # Svelte stores for state management
-│   ├── styles/          # Global SCSS styles and tokens
-│   ├── types/           # TypeScript type definitions
-│   └── utils/           # Utility functions and helpers
+│   ├── styles/          # Lean CSS with custom properties
+│   └── assets/          # Static assets
 ├── routes/
-│   ├── +layout.svelte   # Main application layout
-│   ├── +page.svelte     # Dashboard (home page)
+│   ├── +layout.svelte   # Clean application layout
+│   ├── +page.svelte     # Professional dashboard
 │   ├── matrix/          # Priority Matrix view
-│   └── timeline/        # Roadmap Timeline view
+│   └── timeline/        # Timeline view
 └── app.html             # HTML template
 ```
 
 ## 🎨 Design System
 
-The application uses a comprehensive design system with:
+Clean, professional design inspired by modern corporate tools:
 
-- **Color Palette**: Primary blue theme with semantic color variants
-- **Typography**: Inter font family with consistent scale
-- **Spacing**: 8px base unit with systematic scale
-- **Components**: Reusable UI patterns with consistent styling
-- **Responsive Design**: Mobile-first approach with breakpoint system
+- **Colors**: Neutral grays with subtle blue accents
+- **Typography**: System fonts for optimal performance
+- **Spacing**: 4px, 8px, 16px, 24px scale for consistency
+- **Components**: Minimal, functional UI components
+- **Mobile-first**: Responsive without bloat
 
 ## 📊 Data Model
 
