@@ -11,7 +11,7 @@
 	let { showFilters = true }: Props = $props();
 
 	let showForm = $state(false);
-	let editingFeature = $state(null);
+	let editingFeature = $state<Feature | null>(null);
 
 	const priorityOptions: { value: Priority | 'all'; label: string }[] = [
 		{ value: 'all', label: 'All Priorities' },

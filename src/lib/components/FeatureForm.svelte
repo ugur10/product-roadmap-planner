@@ -1,6 +1,7 @@
 <script lang="ts">
-	import type { Feature, Priority, Status, Category } from '../types.js';
+	import type { Feature, Priority, Status, Category, ImpactScore, EffortScore } from '../types.js';
 	import { featuresStore } from '../stores/features.svelte.js';
+	import { getDefaultMatrixPosition, updateFeaturePriority } from '../utils/matrix.js';
 
 	interface Props {
 		feature?: Feature | null;
@@ -18,6 +19,8 @@
 	let estimatedHours = $state(feature?.estimatedHours || 8);
 	let assignee = $state(feature?.assignee || '');
 	let dueDate = $state(feature?.dueDate || '');
+	let impact = $state<ImpactScore>(feature?.matrix?.impact || 3);
+	let effort = $state<EffortScore>(feature?.matrix?.effort || 3);
 
 	let errors = $state<Record<string, string>>({});
 
@@ -78,7 +81,8 @@
 			category,
 			estimatedHours,
 			assignee: assignee.trim() || undefined,
-			dueDate: dueDate || undefined
+			dueDate: dueDate || undefined,
+			matrix: { impact, effort }
 		};
 
 		let savedFeature: Feature;
@@ -106,13 +110,13 @@
 
 <div
 	class="modal-overlay"
-	onclick={onClose}
+	onclick={(e) => e.target === e.currentTarget && onClose()}
 	onkeydown={(e) => e.key === 'Escape' && onClose()}
 	role="dialog"
 	aria-modal="true"
 	tabindex="-1"
 >
-	<div class="modal" onclick={(e) => e.stopPropagation()}>
+	<div class="modal" role="document">
 		<div class="modal-header">
 			<h2>{feature ? 'Edit Feature' : 'Add New Feature'}</h2>
 			<button class="btn-close" onclick={onClose} aria-label="Close">×</button>
@@ -217,6 +221,37 @@
 				{#if errors.dueDate}
 					<span class="error-message">{errors.dueDate}</span>
 				{/if}
+			</div>
+
+			<div class="form-section">
+				<h4>Priority Matrix</h4>
+				<p class="form-section-desc">Impact and effort scores for strategic prioritization</p>
+
+				<div class="form-row">
+					<div class="form-group">
+						<label for="impact">Impact (1-5)</label>
+						<select id="impact" bind:value={impact}>
+							<option value={1}>1 - Minimal</option>
+							<option value={2}>2 - Low</option>
+							<option value={3}>3 - Medium</option>
+							<option value={4}>4 - High</option>
+							<option value={5}>5 - Critical</option>
+						</select>
+						<span class="field-hint">How much business value will this create?</span>
+					</div>
+
+					<div class="form-group">
+						<label for="effort">Effort (1-5)</label>
+						<select id="effort" bind:value={effort}>
+							<option value={1}>1 - Minimal</option>
+							<option value={2}>2 - Low</option>
+							<option value={3}>3 - Medium</option>
+							<option value={4}>4 - High</option>
+							<option value={5}>5 - Extensive</option>
+						</select>
+						<span class="field-hint">How much time and resources will this require?</span>
+					</div>
+				</div>
 			</div>
 
 			<div class="modal-footer">
@@ -336,6 +371,34 @@
 		margin-top: var(--space-1);
 		font-size: var(--font-size-sm);
 		color: var(--color-danger);
+	}
+
+	.form-section {
+		margin-top: var(--space-6);
+		padding-top: var(--space-4);
+		border-top: 1px solid var(--gray-200);
+	}
+
+	.form-section h4 {
+		margin: 0 0 var(--space-2) 0;
+		font-size: var(--font-size-base);
+		font-weight: 600;
+		color: var(--color-text);
+	}
+
+	.form-section-desc {
+		margin: 0 0 var(--space-4) 0;
+		font-size: var(--font-size-sm);
+		color: var(--color-text-muted);
+		line-height: 1.4;
+	}
+
+	.field-hint {
+		display: block;
+		margin-top: var(--space-1);
+		font-size: var(--font-size-xs);
+		color: var(--color-text-muted);
+		line-height: 1.3;
 	}
 
 	.modal-footer {

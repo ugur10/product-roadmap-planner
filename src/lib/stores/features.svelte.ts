@@ -22,7 +22,8 @@ function createFeaturesStore() {
 			assignee: 'John Doe',
 			dueDate: '2024-02-15',
 			createdAt: new Date().toISOString(),
-			updatedAt: new Date().toISOString()
+			updatedAt: new Date().toISOString(),
+			matrix: { impact: 4, effort: 3 }
 		},
 		{
 			id: '2',
@@ -35,7 +36,8 @@ function createFeaturesStore() {
 			assignee: 'Jane Smith',
 			dueDate: '2024-02-20',
 			createdAt: new Date().toISOString(),
-			updatedAt: new Date().toISOString()
+			updatedAt: new Date().toISOString(),
+			matrix: { impact: 3, effort: 2 }
 		},
 		{
 			id: '3',
@@ -47,7 +49,48 @@ function createFeaturesStore() {
 			estimatedHours: 12,
 			assignee: 'Bob Wilson',
 			createdAt: new Date().toISOString(),
-			updatedAt: new Date().toISOString()
+			updatedAt: new Date().toISOString(),
+			matrix: { impact: 5, effort: 2 }
+		},
+		{
+			id: '4',
+			title: 'Advanced Analytics Dashboard',
+			description: 'Build comprehensive analytics with charts and reporting',
+			priority: 'medium',
+			status: 'planning',
+			category: 'frontend',
+			estimatedHours: 40,
+			assignee: 'Alice Johnson',
+			dueDate: '2024-03-15',
+			createdAt: new Date().toISOString(),
+			updatedAt: new Date().toISOString(),
+			matrix: { impact: 4, effort: 5 }
+		},
+		{
+			id: '5',
+			title: 'Email Notification System',
+			description: 'Automated email notifications for important events',
+			priority: 'low',
+			status: 'planning',
+			category: 'backend',
+			estimatedHours: 8,
+			assignee: 'Mike Davis',
+			createdAt: new Date().toISOString(),
+			updatedAt: new Date().toISOString(),
+			matrix: { impact: 2, effort: 2 }
+		},
+		{
+			id: '6',
+			title: 'Legacy System Migration',
+			description: 'Migrate old data processing system to new architecture',
+			priority: 'low',
+			status: 'on_hold',
+			category: 'infrastructure',
+			estimatedHours: 80,
+			assignee: 'Sarah Brown',
+			createdAt: new Date().toISOString(),
+			updatedAt: new Date().toISOString(),
+			matrix: { impact: 2, effort: 5 }
 		}
 	];
 
