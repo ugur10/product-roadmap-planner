@@ -177,13 +177,22 @@ bun run check        # Type check with svelte-check
 - ✅ **Phase 2B**: Quarterly timeline visualization with drag-and-drop
 - [ ] **Phase 2C**: Progress tracking dashboard
 
-**Phase 3: Advanced Features**
+**Phase 3: Testing & Quality Assurance** 🚧 **HIGH PRIORITY**
+
+- [ ] Set up comprehensive testing framework (Vitest + @testing-library/svelte)
+- [ ] Unit tests for feature store CRUD operations and state management
+- [ ] Component tests for FeatureForm, FeatureCard, FilterBar, and modals
+- [ ] Integration tests for drag-and-drop functionality (matrix & timeline)
+- [ ] Tests for priority calculations, quarter grouping, and date logic
+- [ ] E2E tests with Playwright for critical user flows
+
+**Phase 4: Advanced Features**
 
 - [ ] JSON export/import functionality
 - [ ] Advanced filtering and sorting
 - [ ] Responsive design optimization
 
-**Phase 4: Polish & Enhancement**
+**Phase 5: Polish & Enhancement**
 
 - [ ] Performance optimization
 - [ ] Accessibility improvements
