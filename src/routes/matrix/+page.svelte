@@ -228,28 +228,13 @@
 	}
 
 	.insight-card {
-		background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+		background: white;
 		border: 1px solid var(--gray-200);
-		border-radius: var(--radius-2xl);
-		padding: var(--space-8) var(--space-10);
-		max-width: 1200px;
+		border-radius: var(--radius-lg);
+		padding: var(--space-6);
+		max-width: 1000px;
 		width: 100%;
-		box-shadow:
-			0 10px 15px -3px rgba(0, 0, 0, 0.1),
-			0 4px 6px -2px rgba(0, 0, 0, 0.05),
-			inset 0 1px 0 rgba(255, 255, 255, 0.1);
-		position: relative;
-		overflow: hidden;
-	}
-
-	.insight-card::before {
-		content: '';
-		position: absolute;
-		top: 0;
-		left: 0;
-		right: 0;
-		height: 4px;
-		background: linear-gradient(90deg, #10b981 0%, #3b82f6 25%, #f59e0b 50%, #ef4444 75%, #10b981 100%);
+		box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 	}
 
 	.insight-card h3 {
@@ -271,15 +256,13 @@
 	.insight {
 		display: flex;
 		align-items: flex-start;
-		gap: var(--space-5);
-		padding: var(--space-8);
-		border-radius: var(--radius-2xl);
-		background: linear-gradient(135deg, #ffffff 0%, #fafbfc 100%);
-		border: 1px solid var(--gray-100);
-		transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+		gap: var(--space-4);
+		padding: var(--space-6);
+		border-radius: var(--radius-lg);
+		background: white;
+		border: 1px solid var(--gray-200);
+		transition: all 0.2s ease;
 		position: relative;
-		overflow: hidden;
-		box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 	}
 
 	.insight::before {
@@ -288,45 +271,27 @@
 		top: 0;
 		left: 0;
 		right: 0;
-		height: 4px;
-		background: linear-gradient(90deg, var(--insight-color, var(--color-primary)) 0%,
-		                                   color-mix(in srgb, var(--insight-color, var(--color-primary)) 80%, white) 100%);
-		border-radius: var(--radius-2xl) var(--radius-2xl) 0 0;
+		height: 3px;
+		background: var(--insight-color, var(--color-primary));
+		border-radius: var(--radius-lg) var(--radius-lg) 0 0;
 	}
 
 	.insight:hover {
-		transform: translateY(-6px);
-		box-shadow:
-			0 25px 35px -8px rgba(0, 0, 0, 0.12),
-			0 15px 20px -8px rgba(0, 0, 0, 0.08);
-		border-color: color-mix(in srgb, var(--insight-color, var(--color-primary)) 30%, var(--gray-200));
-		background: linear-gradient(135deg, #ffffff 0%, color-mix(in srgb, var(--insight-color, var(--color-primary)) 2%, #fafbfc) 100%);
+		transform: translateY(-2px);
+		box-shadow: 0 8px 25px -8px rgba(0, 0, 0, 0.1);
+		border-color: var(--gray-300);
 	}
 
 	.insight-icon {
-		width: 56px;
-		height: 56px;
-		border-radius: var(--radius-2xl);
+		width: 40px;
+		height: 40px;
+		border-radius: var(--radius-lg);
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		font-size: var(--font-size-xl);
 		color: white;
 		flex-shrink: 0;
-		box-shadow:
-			0 8px 16px -4px rgba(0, 0, 0, 0.15),
-			0 4px 8px -2px rgba(0, 0, 0, 0.1);
-		position: relative;
-		overflow: hidden;
-	}
-
-	.insight-icon::before {
-		content: '';
-		position: absolute;
-		inset: 0;
-		background: inherit;
-		border-radius: inherit;
-		opacity: 0.1;
+		box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 	}
 
 	.insight div {
@@ -390,8 +355,8 @@
 		}
 
 		.insight-icon {
-			width: 48px;
-			height: 48px;
+			width: 36px;
+			height: 36px;
 		}
 	}
 
@@ -429,8 +394,8 @@
 		}
 
 		.insight-icon {
-			width: 40px;
-			height: 40px;
+			width: 32px;
+			height: 32px;
 		}
 
 		.insight strong {

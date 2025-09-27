@@ -237,12 +237,11 @@
 
 	.matrix-wrapper {
 		display: grid;
-		grid-template-columns: 80px 1fr;
-		grid-template-rows: 1fr 80px;
-		gap: var(--space-6);
-		min-height: 600px;
-		max-width: 1000px;
+		grid-template-columns: 80px 600px;
+		grid-template-rows: 600px 80px;
+		gap: var(--space-4);
 		margin: 0 auto;
+		justify-content: center;
 	}
 
 	.axis-label {
@@ -544,10 +543,8 @@
 
 	@media (max-width: 1024px) {
 		.matrix-wrapper {
-			grid-template-columns: 60px 1fr;
-			grid-template-rows: 1fr 60px;
-			gap: var(--space-4);
-			min-height: 500px;
+			grid-template-columns: 60px 500px;
+			grid-template-rows: 500px 60px;
 		}
 
 		.quadrant-label {
@@ -562,14 +559,13 @@
 
 	@media (max-width: 768px) {
 		.matrix-container {
-			gap: var(--space-8);
+			gap: var(--space-6);
 		}
 
 		.matrix-wrapper {
-			grid-template-columns: 50px 1fr;
-			grid-template-rows: 1fr 50px;
+			grid-template-columns: 50px 400px;
+			grid-template-rows: 400px 50px;
 			gap: var(--space-3);
-			min-height: 400px;
 		}
 
 		.axis-label {
@@ -594,9 +590,8 @@
 			height: 32px;
 		}
 
-		.matrix-legend,
-		.matrix-legend h4 {
-			padding: var(--space-6);
+		.matrix-legend {
+			padding: var(--space-4);
 		}
 
 		.legend-items {
@@ -611,10 +606,9 @@
 
 	@media (max-width: 480px) {
 		.matrix-wrapper {
-			grid-template-columns: 40px 1fr;
-			grid-template-rows: 1fr 40px;
+			grid-template-columns: 40px 320px;
+			grid-template-rows: 320px 40px;
 			gap: var(--space-2);
-			min-height: 350px;
 		}
 
 		.quadrant-label {
