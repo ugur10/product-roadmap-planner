@@ -1,13 +1,13 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { featuresStore } from './features.svelte.js';
+import { featuresStore } from './features.test-impl.js';
 import type { Feature } from '../types.js';
 
 describe('Features Store', () => {
 	beforeEach(() => {
 		// Clear localStorage before each test
 		localStorage.clear();
-		// Reset the store
-		featuresStore.loadFeatures();
+		// Reset the store to empty state
+		(featuresStore as any).reset();
 	});
 
 	describe('addFeature', () => {
@@ -78,7 +78,7 @@ describe('Features Store', () => {
 			expect(updatedFeature!.description).toBe('Original Description'); // unchanged
 		});
 
-		it('should update the updatedAt timestamp', () => {
+		it('should update the updatedAt timestamp', async () => {
 			const feature = featuresStore.addFeature({
 				title: 'Test Feature',
 				description: 'Test Description',
@@ -92,13 +92,13 @@ describe('Features Store', () => {
 			const originalUpdatedAt = feature.updatedAt;
 
 			// Wait a bit to ensure timestamp difference
-			setTimeout(() => {
-				const updatedFeature = featuresStore.updateFeature(feature.id, {
-					title: 'Updated Title'
-				});
+			await new Promise(resolve => setTimeout(resolve, 10));
 
-				expect(updatedFeature!.updatedAt).not.toBe(originalUpdatedAt);
-			}, 10);
+			const updatedFeature = featuresStore.updateFeature(feature.id, {
+				title: 'Updated Title'
+			});
+
+			expect(updatedFeature!.updatedAt).not.toBe(originalUpdatedAt);
 		});
 
 		it('should return null for non-existent feature', () => {
@@ -291,6 +291,7 @@ describe('Features Store', () => {
 	describe('localStorage integration', () => {
 		it('should load sample data when localStorage is empty', () => {
 			localStorage.clear();
+			(featuresStore as any).reset();
 			featuresStore.loadFeatures();
 
 			// Should have sample data
@@ -312,6 +313,7 @@ describe('Features Store', () => {
 			}];
 
 			localStorage.setItem('roadmap-features', JSON.stringify(testFeatures));
+			(featuresStore as any).reset();
 			featuresStore.loadFeatures();
 
 			expect(featuresStore.features.length).toBe(1);
