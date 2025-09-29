@@ -116,8 +116,9 @@ function createFeaturesStore() {
 
 	// Filtered features based on current filters
 	function getFilteredFeatures() {
-		return features.filter(feature => {
-			const matchesSearch = filters.search === '' ||
+		return features.filter((feature) => {
+			const matchesSearch =
+				filters.search === '' ||
 				feature.title.toLowerCase().includes(filters.search.toLowerCase()) ||
 				feature.description.toLowerCase().includes(filters.search.toLowerCase());
 
@@ -132,9 +133,9 @@ function createFeaturesStore() {
 	// Statistics
 	function getStats() {
 		const total = features.length;
-		const inProgress = features.filter(f => f.status === 'in_progress').length;
-		const completed = features.filter(f => f.status === 'completed').length;
-		const planning = features.filter(f => f.status === 'planning').length;
+		const inProgress = features.filter((f) => f.status === 'in_progress').length;
+		const completed = features.filter((f) => f.status === 'completed').length;
+		const planning = features.filter((f) => f.status === 'planning').length;
 
 		return { total, inProgress, completed, planning };
 	}
@@ -153,7 +154,7 @@ function createFeaturesStore() {
 	}
 
 	function updateFeature(id: string, updates: Partial<Omit<Feature, 'id' | 'createdAt'>>) {
-		const index = features.findIndex(f => f.id === id);
+		const index = features.findIndex((f) => f.id === id);
 		if (index !== -1) {
 			features[index] = {
 				...features[index],
@@ -167,7 +168,7 @@ function createFeaturesStore() {
 	}
 
 	function deleteFeature(id: string) {
-		const index = features.findIndex(f => f.id === id);
+		const index = features.findIndex((f) => f.id === id);
 		if (index !== -1) {
 			features.splice(index, 1);
 			saveFeatures();
@@ -177,7 +178,7 @@ function createFeaturesStore() {
 	}
 
 	function getFeature(id: string) {
-		return features.find(f => f.id === id) || null;
+		return features.find((f) => f.id === id) || null;
 	}
 
 	function setFilter<K extends keyof FilterOptions>(key: K, value: FilterOptions[K]) {
@@ -207,10 +208,18 @@ function createFeaturesStore() {
 	loadFeatures();
 
 	return {
-		get features() { return features; },
-		get filteredFeatures() { return getFilteredFeatures(); },
-		get filters() { return filters; },
-		get stats() { return getStats(); },
+		get features() {
+			return features;
+		},
+		get filteredFeatures() {
+			return getFilteredFeatures();
+		},
+		get filters() {
+			return filters;
+		},
+		get stats() {
+			return getStats();
+		},
 		addFeature,
 		updateFeature,
 		deleteFeature,

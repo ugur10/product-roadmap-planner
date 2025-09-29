@@ -1,4 +1,10 @@
-import type { Feature, MatrixQuadrant, ImpactScore, EffortScore, MatrixPosition } from '../types.js';
+import type {
+	Feature,
+	MatrixQuadrant,
+	ImpactScore,
+	EffortScore,
+	MatrixPosition
+} from '../types.js';
 
 /**
  * Calculate automated priority score based on Impact × Effort matrix
@@ -9,7 +15,7 @@ export function calculatePriorityScore(impact: ImpactScore, effort: EffortScore)
 	// Formula: (Impact * 5) - (Effort - 1)
 	// This gives: Impact 5, Effort 1 = 25 (highest)
 	//            Impact 1, Effort 5 = 1 (lowest)
-	return (impact * 5) - (effort - 1);
+	return impact * 5 - (effort - 1);
 }
 
 /**
@@ -81,26 +87,32 @@ export function getQuadrantColor(quadrant: MatrixQuadrant): string {
 /**
  * Convert Impact/Effort scores to matrix coordinates (0-100 scale)
  */
-export function scoresToCoordinates(impact: ImpactScore, effort: EffortScore): { x: number; y: number } {
+export function scoresToCoordinates(
+	impact: ImpactScore,
+	effort: EffortScore
+): { x: number; y: number } {
 	// Impact = Y axis (bottom to top, so we invert)
 	// Effort = X axis (left to right)
 	return {
 		x: ((effort - 1) / 4) * 100, // 1-5 scale to 0-100
-		y: ((5 - impact) / 4) * 100  // 1-5 scale to 0-100 (inverted for impact)
+		y: ((5 - impact) / 4) * 100 // 1-5 scale to 0-100 (inverted for impact)
 	};
 }
 
 /**
  * Convert matrix coordinates back to Impact/Effort scores
  */
-export function coordinatesToScores(x: number, y: number): { impact: ImpactScore; effort: EffortScore } {
+export function coordinatesToScores(
+	x: number,
+	y: number
+): { impact: ImpactScore; effort: EffortScore } {
 	// Clamp coordinates to 0-100 range
 	const clampedX = Math.max(0, Math.min(100, x));
 	const clampedY = Math.max(0, Math.min(100, y));
 
 	// Convert back to 1-5 scale
-	const effort = Math.round((clampedX / 100) * 4) + 1 as EffortScore;
-	const impact = Math.round(((100 - clampedY) / 100) * 4) + 1 as ImpactScore;
+	const effort = (Math.round((clampedX / 100) * 4) + 1) as EffortScore;
+	const impact = (Math.round(((100 - clampedY) / 100) * 4) + 1) as ImpactScore;
 
 	return { impact, effort };
 }

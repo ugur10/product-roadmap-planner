@@ -19,7 +19,10 @@
 
 <svelte:head>
 	<title>Priority Matrix - Product Roadmap Planner</title>
-	<meta name="description" content="Interactive Impact vs Effort matrix for strategic feature prioritization" />
+	<meta
+		name="description"
+		content="Interactive Impact vs Effort matrix for strategic feature prioritization"
+	/>
 </svelte:head>
 
 <div class="page">
@@ -33,10 +36,18 @@
 			<div class="instruction-card">
 				<h3>How to Use</h3>
 				<ul>
-					<li><strong>Drag & Drop:</strong> Move features around the matrix to adjust their Impact and Effort scores</li>
+					<li>
+						<strong>Drag & Drop:</strong> Move features around the matrix to adjust their Impact and
+						Effort scores
+					</li>
 					<li><strong>Click:</strong> Click on any feature dot to edit its details</li>
-					<li><strong>Auto-Priority:</strong> Feature priorities update automatically based on matrix position</li>
-					<li><strong>Quadrants:</strong> Features are categorized into strategic quadrants based on their scores</li>
+					<li>
+						<strong>Auto-Priority:</strong> Feature priorities update automatically based on matrix position
+					</li>
+					<li>
+						<strong>Quadrants:</strong> Features are categorized into strategic quadrants based on their
+						scores
+					</li>
 				</ul>
 			</div>
 		</div>
@@ -48,8 +59,18 @@
 				<h3>Strategic Insights</h3>
 				<div class="insights-grid">
 					<div class="insight" style="--insight-color: #10b981;">
-						<span class="insight-icon" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
-							<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+						<span
+							class="insight-icon"
+							style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);"
+						>
+							<svg
+								width="24"
+								height="24"
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="currentColor"
+								stroke-width="2"
+							>
 								<circle cx="12" cy="12" r="10"></circle>
 								<polyline points="16,12 12,8 8,12"></polyline>
 								<line x1="12" y1="16" x2="12" y2="12"></line>
@@ -61,8 +82,18 @@
 						</div>
 					</div>
 					<div class="insight" style="--insight-color: #3b82f6;">
-						<span class="insight-icon" style="background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);">
-							<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+						<span
+							class="insight-icon"
+							style="background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);"
+						>
+							<svg
+								width="24"
+								height="24"
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="currentColor"
+								stroke-width="2"
+							>
 								<circle cx="12" cy="12" r="3"></circle>
 								<path d="m8 16 4-4 4 4"></path>
 								<path d="m8 8 4 4 4-4"></path>
@@ -74,8 +105,18 @@
 						</div>
 					</div>
 					<div class="insight" style="--insight-color: #f59e0b;">
-						<span class="insight-icon" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);">
-							<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+						<span
+							class="insight-icon"
+							style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);"
+						>
+							<svg
+								width="24"
+								height="24"
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="currentColor"
+								stroke-width="2"
+							>
 								<rect x="9" y="9" width="6" height="6"></rect>
 								<path d="m16 16 4 4"></path>
 								<path d="m8 16 4 4"></path>
@@ -89,8 +130,18 @@
 						</div>
 					</div>
 					<div class="insight" style="--insight-color: #ef4444;">
-						<span class="insight-icon" style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);">
-							<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+						<span
+							class="insight-icon"
+							style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);"
+						>
+							<svg
+								width="24"
+								height="24"
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="currentColor"
+								stroke-width="2"
+							>
 								<circle cx="12" cy="12" r="10"></circle>
 								<line x1="15" y1="9" x2="9" y2="15"></line>
 								<line x1="9" y1="9" x2="15" y2="15"></line>
@@ -108,10 +159,7 @@
 </div>
 
 {#if showForm}
-	<FeatureForm
-		feature={selectedFeature}
-		onClose={handleCloseForm}
-	/>
+	<FeatureForm feature={selectedFeature} onClose={handleCloseForm} />
 {/if}
 
 <style>

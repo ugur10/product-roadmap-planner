@@ -61,10 +61,12 @@
 
 	const hasActiveFilters = $derived(() => {
 		const filters = featuresStore.filters;
-		return filters.search !== '' ||
-			   filters.priority !== 'all' ||
-			   filters.status !== 'all' ||
-			   filters.category !== 'all';
+		return (
+			filters.search !== '' ||
+			filters.priority !== 'all' ||
+			filters.status !== 'all' ||
+			filters.category !== 'all'
+		);
 	});
 
 	const sortedFeatures = $derived(() => {
@@ -93,9 +95,7 @@
 			<div class="filters-header">
 				<h3>Filters</h3>
 				{#if hasActiveFilters()}
-					<button class="btn btn-secondary btn-sm" onclick={handleClearFilters}>
-						Clear All
-					</button>
+					<button class="btn btn-secondary btn-sm" onclick={handleClearFilters}> Clear All </button>
 				{/if}
 			</div>
 
@@ -112,10 +112,7 @@
 
 				<div class="filter-group">
 					<label for="priority-filter">Priority</label>
-					<select
-						id="priority-filter"
-						bind:value={featuresStore.filters.priority}
-					>
+					<select id="priority-filter" bind:value={featuresStore.filters.priority}>
 						{#each priorityOptions as option}
 							<option value={option.value}>{option.label}</option>
 						{/each}
@@ -124,10 +121,7 @@
 
 				<div class="filter-group">
 					<label for="status-filter">Status</label>
-					<select
-						id="status-filter"
-						bind:value={featuresStore.filters.status}
-					>
+					<select id="status-filter" bind:value={featuresStore.filters.status}>
 						{#each statusOptions as option}
 							<option value={option.value}>{option.label}</option>
 						{/each}
@@ -136,10 +130,7 @@
 
 				<div class="filter-group">
 					<label for="category-filter">Category</label>
-					<select
-						id="category-filter"
-						bind:value={featuresStore.filters.category}
-					>
+					<select id="category-filter" bind:value={featuresStore.filters.category}>
 						{#each categoryOptions as option}
 							<option value={option.value}>{option.label}</option>
 						{/each}
@@ -158,7 +149,14 @@
 			{/if}
 		</div>
 		<button class="btn btn-primary" onclick={handleAddFeature}>
-			<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+			<svg
+				width="16"
+				height="16"
+				viewBox="0 0 24 24"
+				fill="none"
+				stroke="currentColor"
+				stroke-width="2"
+			>
 				<circle cx="12" cy="12" r="10"></circle>
 				<line x1="12" y1="8" x2="12" y2="16"></line>
 				<line x1="8" y1="12" x2="16" y2="12"></line>
@@ -169,33 +167,28 @@
 
 	<div class="features-grid">
 		{#each sortedFeatures() as feature (feature.id)}
-			<FeatureCard
-				{feature}
-				onEdit={handleEditFeature}
-				onView={handleEditFeature}
-			/>
+			<FeatureCard {feature} onEdit={handleEditFeature} onView={handleEditFeature} />
 		{:else}
 			<div class="empty-state">
 				<div class="empty-icon">📋</div>
 				<h3>No features found</h3>
 				{#if hasActiveFilters()}
-					<p>Try adjusting your filters or <button class="link-button" onclick={handleClearFilters}>clear all filters</button></p>
+					<p>
+						Try adjusting your filters or <button class="link-button" onclick={handleClearFilters}
+							>clear all filters</button
+						>
+					</p>
 				{:else}
 					<p>Get started by adding your first feature</p>
 				{/if}
-				<button class="btn btn-primary" onclick={handleAddFeature}>
-					Add Your First Feature
-				</button>
+				<button class="btn btn-primary" onclick={handleAddFeature}> Add Your First Feature </button>
 			</div>
 		{/each}
 	</div>
 </div>
 
 {#if showForm}
-	<FeatureForm
-		feature={editingFeature}
-		onClose={handleCloseForm}
-	/>
+	<FeatureForm feature={editingFeature} onClose={handleCloseForm} />
 {/if}
 
 <style>

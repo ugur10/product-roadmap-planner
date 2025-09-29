@@ -1,830 +1,948 @@
 <script lang="ts">
 	import { featuresStore } from '$lib/stores/features.svelte.js';
-	import type { Status, Priority, Category } from '$lib/types.js';
+	import type { Status, Priority } from '$lib/types.js';
 
 	// Derived statistics from the features store
 	const { features } = featuresStore;
 
-	// Enhanced analytics calculations
+	// Enhanced PM-focused analytics
 	const analytics = $derived(() => {
+		const now = new Date();
 		const totalFeatures = features.length;
+
+		// Status breakdown
 		const statusCounts = {
-			planning: features.filter(f => f.status === 'planning').length,
-			in_progress: features.filter(f => f.status === 'in_progress').length,
-			testing: features.filter(f => f.status === 'testing').length,
-			completed: features.filter(f => f.status === 'completed').length,
-			on_hold: features.filter(f => f.status === 'on_hold').length
+			planning: features.filter((f) => f.status === 'planning').length,
+			in_progress: features.filter((f) => f.status === 'in_progress').length,
+			testing: features.filter((f) => f.status === 'testing').length,
+			completed: features.filter((f) => f.status === 'completed').length,
+			on_hold: features.filter((f) => f.status === 'on_hold').length
 		};
 
-		const priorityCounts = {
-			critical: features.filter(f => f.priority === 'critical').length,
-			high: features.filter(f => f.priority === 'high').length,
-			medium: features.filter(f => f.priority === 'medium').length,
-			low: features.filter(f => f.priority === 'low').length
-		};
+		// Risk analysis
+		const overdueFeatures = features.filter((f) => {
+			if (!f.dueDate || f.status === 'completed') return false;
+			return new Date(f.dueDate) < now;
+		});
 
-		const categoryCounts = {
-			frontend: features.filter(f => f.category === 'frontend').length,
-			backend: features.filter(f => f.category === 'backend').length,
-			infrastructure: features.filter(f => f.category === 'infrastructure').length,
-			design: features.filter(f => f.category === 'design').length,
-			research: features.filter(f => f.category === 'research').length,
-			other: features.filter(f => f.category === 'other').length
-		};
+		const criticalInProgress = features.filter(
+			(f) => f.priority === 'critical' && f.status === 'in_progress'
+		).length;
 
-		// Team performance
-		const assigneeStats = features.reduce((acc, feature) => {
-			if (feature.assignee) {
-				if (!acc[feature.assignee]) {
-					acc[feature.assignee] = {
-						total: 0,
-						completed: 0,
-						inProgress: 0,
-						totalHours: 0
-					};
+		const blockedFeatures = features.filter((f) => f.status === 'on_hold');
+
+		// Recent activity (last 7 days)
+		const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+		const recentActivity = features
+			.filter((f) => new Date(f.updatedAt) > sevenDaysAgo)
+			.sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
+			.slice(0, 5);
+
+		// Velocity & burndown
+		const completedThisWeek = features.filter(
+			(f) => f.status === 'completed' && new Date(f.updatedAt) > sevenDaysAgo
+		).length;
+
+		// Team workload analysis
+		const teamWorkload = features.reduce(
+			(acc, feature) => {
+				if (feature.assignee && feature.status !== 'completed') {
+					if (!acc[feature.assignee]) {
+						acc[feature.assignee] = {
+							activeItems: 0,
+							totalHours: 0,
+							critical: 0,
+							overdue: 0
+						};
+					}
+					acc[feature.assignee].activeItems++;
+					acc[feature.assignee].totalHours += feature.estimatedHours;
+					if (feature.priority === 'critical') acc[feature.assignee].critical++;
+					if (feature.dueDate && new Date(feature.dueDate) < now) acc[feature.assignee].overdue++;
 				}
-				acc[feature.assignee].total++;
-				acc[feature.assignee].totalHours += feature.estimatedHours;
-				if (feature.status === 'completed') {
-					acc[feature.assignee].completed++;
-				}
-				if (feature.status === 'in_progress') {
-					acc[feature.assignee].inProgress++;
-				}
-			}
-			return acc;
-		}, {} as Record<string, {total: number, completed: number, inProgress: number, totalHours: number}>);
+				return acc;
+			},
+			{} as Record<
+				string,
+				{ activeItems: number; totalHours: number; critical: number; overdue: number }
+			>
+		);
 
-		// Completion rate
-		const completionRate = totalFeatures > 0 ? Math.round((statusCounts.completed / totalFeatures) * 100) : 0;
+		// Business impact analysis
+		const highImpactFeatures = features.filter(
+			(f) => f.priority === 'critical' || f.priority === 'high'
+		);
+		const completedHighImpact = highImpactFeatures.filter((f) => f.status === 'completed').length;
+		const highImpactProgress =
+			highImpactFeatures.length > 0
+				? Math.round((completedHighImpact / highImpactFeatures.length) * 100)
+				: 0;
 
-		// Active work rate (in progress + testing)
-		const activeWork = statusCounts.in_progress + statusCounts.testing;
-		const activeRate = totalFeatures > 0 ? Math.round((activeWork / totalFeatures) * 100) : 0;
-
-		// Total estimated hours
-		const totalHours = features.reduce((sum, f) => sum + f.estimatedHours, 0);
-		const completedHours = features
-			.filter(f => f.status === 'completed')
-			.reduce((sum, f) => sum + f.estimatedHours, 0);
+		// Completion trends
+		const completionRate =
+			totalFeatures > 0 ? Math.round((statusCounts.completed / totalFeatures) * 100) : 0;
+		const momentum =
+			completedThisWeek > 0 ? 'strong' : statusCounts.in_progress > 0 ? 'steady' : 'slow';
 
 		return {
 			totalFeatures,
 			statusCounts,
-			priorityCounts,
-			categoryCounts,
-			assigneeStats,
+			overdueFeatures,
+			criticalInProgress,
+			blockedFeatures,
+			recentActivity,
+			completedThisWeek,
+			teamWorkload,
+			highImpactProgress,
 			completionRate,
-			activeRate,
-			totalHours,
-			completedHours
+			momentum
 		};
 	});
 
-	// Helper functions for progress calculations
-	function getStatusPercentage(count: number, total: number): number {
-		return total > 0 ? Math.round((count / total) * 100) : 0;
+	// Smart insights for PMs
+	const insights = $derived(() => {
+		const data = analytics();
+		const insights = [];
+
+		// Risk alerts
+		if (data.overdueFeatures.length > 0) {
+			insights.push({
+				type: 'risk',
+				title: 'Overdue Features',
+				message: `${data.overdueFeatures.length} features are past their due date`,
+				action: 'Review timeline and reassign resources',
+				urgency: 'high'
+			});
+		}
+
+		if (data.criticalInProgress > 0) {
+			insights.push({
+				type: 'focus',
+				title: 'Critical Features in Progress',
+				message: `${data.criticalInProgress} critical features need attention`,
+				action: 'Daily check-ins recommended',
+				urgency: 'medium'
+			});
+		}
+
+		if (data.blockedFeatures.length > 0) {
+			insights.push({
+				type: 'blocker',
+				title: 'Blocked Features',
+				message: `${data.blockedFeatures.length} features are on hold`,
+				action: 'Identify and resolve blockers',
+				urgency: 'medium'
+			});
+		}
+
+		// Positive momentum
+		if (data.completedThisWeek > 2) {
+			insights.push({
+				type: 'success',
+				title: 'Strong Momentum',
+				message: `${data.completedThisWeek} features completed this week`,
+				action: 'Maintain current pace and team morale',
+				urgency: 'low'
+			});
+		}
+
+		// Team capacity
+		const overloadedTeamMembers = Object.entries(data.teamWorkload).filter(
+			([, stats]) => stats.activeItems > 3
+		).length;
+
+		if (overloadedTeamMembers > 0) {
+			insights.push({
+				type: 'capacity',
+				title: 'Team Capacity Concern',
+				message: `${overloadedTeamMembers} team members have high workload`,
+				action: 'Consider redistributing or deprioritizing features',
+				urgency: 'medium'
+			});
+		}
+
+		return insights;
+	});
+
+	function getTimeAgo(dateString: string): string {
+		const date = new Date(dateString);
+		const now = new Date();
+		const diffInMinutes = Math.floor((now.getTime() - date.getTime()) / (1000 * 60));
+
+		if (diffInMinutes < 60) return `${diffInMinutes}m ago`;
+		if (diffInMinutes < 1440) return `${Math.floor(diffInMinutes / 60)}h ago`;
+		return `${Math.floor(diffInMinutes / 1440)}d ago`;
 	}
 
-	function getStatusColor(status: Status): string {
-		const colors = {
-			planning: '#f59e0b',
-			in_progress: '#3b82f6',
-			testing: '#8b5cf6',
-			completed: '#10b981',
-			on_hold: '#6b7280'
-		};
-		return colors[status];
+	function getMomentumColor(momentum: string): string {
+		return momentum === 'strong' ? '#10b981' : momentum === 'steady' ? '#f59e0b' : '#ef4444';
 	}
 
-	function getPriorityColor(priority: Priority): string {
-		const colors = {
-			critical: '#dc2626',
-			high: '#ea580c',
-			medium: '#f59e0b',
-			low: '#10b981'
+	function getStatusEmoji(status: Status): string {
+		const emojis = {
+			planning: '📋',
+			in_progress: '⚡',
+			testing: '🧪',
+			completed: '✅',
+			on_hold: '⏸️'
 		};
-		return colors[priority];
+		return emojis[status];
 	}
 
-	function getCategoryColor(category: Category): string {
-		const colors = {
-			frontend: '#3b82f6',
-			backend: '#10b981',
-			infrastructure: '#8b5cf6',
-			design: '#f59e0b',
-			research: '#06b6d4',
-			other: '#6b7280'
+	function getPriorityEmoji(priority: Priority): string {
+		const emojis = {
+			critical: '🔥',
+			high: '🟠',
+			medium: '🟡',
+			low: '🟢'
 		};
-		return colors[category];
+		return emojis[priority];
 	}
 </script>
 
 <svelte:head>
 	<title>Progress Dashboard - Product Roadmap Planner</title>
-	<meta name="description" content="Track progress, monitor team performance, and analyze feature development metrics" />
+	<meta
+		name="description"
+		content="Smart insights, team performance, and actionable analytics for product managers"
+	/>
 </svelte:head>
 
-<div class="page">
-	<header class="page-header">
-		<h1>Progress Dashboard</h1>
-		<p class="text-muted">Monitor development progress, team performance, and strategic insights</p>
-	</header>
-
-	<div class="dashboard-content">
-		<!-- Key Metrics Overview -->
-		<section class="metrics-overview">
-			<div class="metric-card primary">
-				<div class="metric-icon" style="background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);">
-					<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-						<path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
-					</svg>
-				</div>
-				<div class="metric-content">
+<div class="dashboard">
+	<!-- Hero Status Banner -->
+	<section class="hero-banner">
+		<div class="hero-content">
+			<div class="hero-main">
+				<h1>
+					<span class="momentum-indicator" style="color: {getMomentumColor(analytics().momentum)}">
+						{analytics().momentum === 'strong'
+							? '🚀'
+							: analytics().momentum === 'steady'
+								? '⚡'
+								: '🐌'}
+					</span>
+					Project Health Dashboard
+				</h1>
+				<p class="hero-subtitle">
+					{analytics().completionRate}% complete • {analytics().statusCounts.in_progress} in progress
+					•
+					{analytics().completedThisWeek} shipped this week
+				</p>
+			</div>
+			<div class="hero-metrics">
+				<div class="hero-metric">
 					<div class="metric-value">{analytics().totalFeatures}</div>
 					<div class="metric-label">Total Features</div>
 				</div>
-			</div>
-
-			<div class="metric-card success">
-				<div class="metric-icon" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
-					<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-						<polyline points="20,6 9,17 4,12"></polyline>
-					</svg>
-				</div>
-				<div class="metric-content">
+				<div class="hero-metric highlight">
 					<div class="metric-value">{analytics().completionRate}%</div>
-					<div class="metric-label">Completion Rate</div>
+					<div class="metric-label">Complete</div>
 				</div>
 			</div>
+		</div>
+	</section>
 
-			<div class="metric-card warning">
-				<div class="metric-icon" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);">
-					<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-						<circle cx="12" cy="12" r="10"></circle>
-						<polyline points="12,6 12,12 16,14"></polyline>
-					</svg>
-				</div>
-				<div class="metric-content">
-					<div class="metric-value">{analytics().activeRate}%</div>
-					<div class="metric-label">Active Work</div>
-				</div>
-			</div>
-
-			<div class="metric-card info">
-				<div class="metric-icon" style="background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);">
-					<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-						<circle cx="12" cy="12" r="3"></circle>
-						<path d="m8 16 4-4 4 4"></path>
-						<path d="m8 8 4 4 4-4"></path>
-					</svg>
-				</div>
-				<div class="metric-content">
-					<div class="metric-value">{analytics().totalHours}h</div>
-					<div class="metric-label">Total Effort</div>
-				</div>
+	<!-- Smart Insights -->
+	{#if insights().length > 0}
+		<section class="insights-section">
+			<h2>🎯 Action Required</h2>
+			<div class="insights-grid">
+				{#each insights() as insight}
+					<div class="insight-card {insight.urgency}">
+						<div class="insight-header">
+							<div class="insight-icon">
+								{#if insight.type === 'risk'}🚨
+								{:else if insight.type === 'focus'}👀
+								{:else if insight.type === 'blocker'}🚧
+								{:else if insight.type === 'success'}🎉
+								{:else if insight.type === 'capacity'}⚖️
+								{/if}
+							</div>
+							<div class="insight-content">
+								<h3>{insight.title}</h3>
+								<p>{insight.message}</p>
+								<div class="insight-action">{insight.action}</div>
+							</div>
+						</div>
+					</div>
+				{/each}
 			</div>
 		</section>
+	{/if}
 
-		<!-- Progress Visualizations -->
-		<section class="progress-charts">
-			<!-- Status Distribution -->
-			<div class="chart-card">
-				<h3>Status Distribution</h3>
-				<div class="status-chart">
+	<!-- Key Progress Areas -->
+	<section class="progress-areas">
+		<div class="progress-grid">
+			<!-- Delivery Pipeline -->
+			<div class="area-card pipeline">
+				<h3>🚀 Delivery Pipeline</h3>
+				<div class="pipeline-flow">
 					{#each Object.entries(analytics().statusCounts) as [status, count]}
-						{@const percentage = getStatusPercentage(count, analytics().totalFeatures)}
-						{@const color = getStatusColor(status as Status)}
-						<div class="status-bar">
-							<div class="status-info">
-								<span class="status-label">{status.replace('_', ' ')}</span>
-								<span class="status-count">{count} ({percentage}%)</span>
-							</div>
-							<div class="progress-bar">
-								<div
-									class="progress-fill"
-									style="width: {percentage}%; background: {color};"
-								></div>
-							</div>
-						</div>
-					{/each}
-				</div>
-			</div>
-
-			<!-- Priority Breakdown -->
-			<div class="chart-card">
-				<h3>Priority Breakdown</h3>
-				<div class="priority-chart">
-					{#each Object.entries(analytics().priorityCounts) as [priority, count]}
-						{@const percentage = getStatusPercentage(count, analytics().totalFeatures)}
-						{@const color = getPriorityColor(priority as Priority)}
-						<div class="priority-item">
-							<div class="priority-header">
-								<span class="priority-dot" style="background: {color};"></span>
-								<span class="priority-label">{priority}</span>
-								<span class="priority-count">{count}</span>
-							</div>
-							<div class="progress-bar">
-								<div
-									class="progress-fill"
-									style="width: {percentage}%; background: {color};"
-								></div>
-							</div>
-						</div>
-					{/each}
-				</div>
-			</div>
-		</section>
-
-		<!-- Category Analysis -->
-		<section class="category-analysis">
-			<div class="chart-card wide">
-				<h3>Category Distribution</h3>
-				<div class="category-grid">
-					{#each Object.entries(analytics().categoryCounts) as [category, count]}
-						{@const percentage = getStatusPercentage(count, analytics().totalFeatures)}
-						{@const color = getCategoryColor(category as Category)}
-						<div class="category-item">
-							<div class="category-visual">
-								<div class="category-circle" style="background: {color};">
-									{count}
+						{#if count > 0}
+							<div class="pipeline-stage">
+								<div class="stage-header">
+									<span class="stage-emoji">{getStatusEmoji(status as Status)}</span>
+									<span class="stage-name">{status.replace('_', ' ')}</span>
+									<span class="stage-count">{count}</span>
 								</div>
-								<div class="category-info">
-									<div class="category-name">{category}</div>
-									<div class="category-percentage">{percentage}%</div>
-								</div>
-							</div>
-						</div>
-					{/each}
-				</div>
-			</div>
-		</section>
-
-		<!-- Team Performance -->
-		{#if Object.keys(analytics().assigneeStats).length > 0}
-		<section class="team-performance">
-			<div class="chart-card wide">
-				<h3>Team Performance</h3>
-				<div class="team-grid">
-					{#each Object.entries(analytics().assigneeStats) as [assignee, stats]}
-						{@const completionRate = stats.total > 0 ? Math.round((stats.completed / stats.total) * 100) : 0}
-						<div class="team-member">
-							<div class="member-header">
-								<div class="member-name">{assignee}</div>
-								<div class="member-stats">
-									<span class="stat-item">
-										<span class="stat-value">{stats.total}</span>
-										<span class="stat-label">Total</span>
-									</span>
-									<span class="stat-item">
-										<span class="stat-value">{stats.completed}</span>
-										<span class="stat-label">Completed</span>
-									</span>
-									<span class="stat-item">
-										<span class="stat-value">{stats.totalHours}h</span>
-										<span class="stat-label">Hours</span>
-									</span>
-								</div>
-							</div>
-							<div class="member-progress">
-								<div class="progress-header">
-									<span>Completion Rate</span>
-									<span>{completionRate}%</span>
-								</div>
-								<div class="progress-bar">
+								<div class="stage-bar">
 									<div
-										class="progress-fill"
-										style="width: {completionRate}%; background: #10b981;"
+										class="stage-fill {status}"
+										style="width: {(count / analytics().totalFeatures) * 100}%"
 									></div>
 								</div>
 							</div>
-						</div>
+						{/if}
 					{/each}
 				</div>
 			</div>
-		</section>
-		{/if}
 
-		<!-- Project Health Insights -->
-		<section class="project-insights">
-			<div class="insight-grid">
-				<div class="insight-card">
-					<div class="insight-header">
-						<h4>Project Health</h4>
-						<div class="health-indicator {analytics().completionRate > 60 ? 'healthy' : analytics().completionRate > 30 ? 'warning' : 'critical'}">
-							{analytics().completionRate > 60 ? 'Healthy' : analytics().completionRate > 30 ? 'On Track' : 'Needs Attention'}
+			<!-- Team Capacity -->
+			{#if Object.keys(analytics().teamWorkload).length > 0}
+				<div class="area-card capacity">
+					<h3>👥 Team Capacity</h3>
+					<div class="team-list">
+						{#each Object.entries(analytics().teamWorkload) as [member, stats]}
+							<div class="team-member" class:overloaded={stats.activeItems > 3}>
+								<div class="member-info">
+									<div class="member-name">{member}</div>
+									<div class="member-stats">
+										{stats.activeItems} active • {stats.totalHours}h
+										{#if stats.critical > 0}<span class="critical-badge">🔥{stats.critical}</span
+											>{/if}
+										{#if stats.overdue > 0}<span class="overdue-badge">⏰{stats.overdue}</span>{/if}
+									</div>
+								</div>
+								<div class="capacity-indicator">
+									{#if stats.activeItems <= 2}
+										<span class="capacity-good">✅</span>
+									{:else if stats.activeItems <= 3}
+										<span class="capacity-full">⚡</span>
+									{:else}
+										<span class="capacity-over">🚨</span>
+									{/if}
+								</div>
+							</div>
+						{/each}
+					</div>
+				</div>
+			{/if}
+
+			<!-- High Impact Progress -->
+			<div class="area-card impact">
+				<h3>💎 High Impact Features</h3>
+				<div class="impact-visual">
+					<div class="circular-progress">
+						<svg width="120" height="120" viewBox="0 0 120 120">
+							<circle cx="60" cy="60" r="50" fill="none" stroke="#e5e7eb" stroke-width="8" />
+							<circle
+								cx="60"
+								cy="60"
+								r="50"
+								fill="none"
+								stroke="#3b82f6"
+								stroke-width="8"
+								stroke-dasharray="314.16"
+								stroke-dashoffset={314.16 - (analytics().highImpactProgress / 100) * 314.16}
+								transform="rotate(-90 60 60)"
+								class="progress-circle"
+							/>
+						</svg>
+						<div class="progress-text">
+							<div class="progress-percent">{analytics().highImpactProgress}%</div>
+							<div class="progress-label">Complete</div>
 						</div>
 					</div>
-					<p>
-						{#if analytics().completionRate > 60}
-							Great progress! The team is on track with strong completion rates.
-						{:else if analytics().completionRate > 30}
-							Good momentum. Consider optimizing active work to maintain pace.
-						{:else}
-							Focus needed. Review blockers and prioritize quick wins.
-						{/if}
-					</p>
-				</div>
-
-				<div class="insight-card">
-					<div class="insight-header">
-						<h4>Effort Analysis</h4>
-						<div class="effort-stats">
-							{Math.round((analytics().completedHours / analytics().totalHours) * 100)}% Complete
-						</div>
+					<div class="impact-details">
+						Critical & high priority features that drive business value
 					</div>
-					<p>
-						{analytics().completedHours} of {analytics().totalHours} estimated hours completed.
-						{analytics().totalHours - analytics().completedHours} hours remaining.
-					</p>
-				</div>
-
-				<div class="insight-card">
-					<div class="insight-header">
-						<h4>Recommendations</h4>
-					</div>
-					<ul>
-						{#if analytics().statusCounts.on_hold > 0}
-							<li>Review {analytics().statusCounts.on_hold} features on hold</li>
-						{/if}
-						{#if analytics().priorityCounts.critical > analytics().statusCounts.completed}
-							<li>Focus on {analytics().priorityCounts.critical} critical features</li>
-						{/if}
-						{#if analytics().activeRate < 20}
-							<li>Consider increasing active development capacity</li>
-						{/if}
-						{#if Object.keys(analytics().assigneeStats).length === 0}
-							<li>Assign features to team members for better tracking</li>
-						{/if}
-					</ul>
 				</div>
 			</div>
+		</div>
+	</section>
+
+	<!-- Recent Activity Feed -->
+	{#if analytics().recentActivity.length > 0}
+		<section class="activity-section">
+			<h2>📈 Recent Activity</h2>
+			<div class="activity-feed">
+				{#each analytics().recentActivity as feature}
+					<div class="activity-item">
+						<div class="activity-icon">
+							<span class="status-emoji">{getStatusEmoji(feature.status)}</span>
+						</div>
+						<div class="activity-content">
+							<div class="activity-title">
+								<span class="feature-title">{feature.title}</span>
+								<span class="priority-badge">{getPriorityEmoji(feature.priority)}</span>
+							</div>
+							<div class="activity-meta">
+								{feature.assignee || 'Unassigned'} • {getTimeAgo(feature.updatedAt)} • {feature.status.replace(
+									'_',
+									' '
+								)}
+							</div>
+						</div>
+					</div>
+				{/each}
+			</div>
 		</section>
-	</div>
+	{/if}
+
+	<!-- Executive Summary -->
+	<section class="executive-summary">
+		<div class="summary-card">
+			<h3>📊 Executive Summary</h3>
+			<div class="summary-content">
+				<div class="summary-stat">
+					<strong>{analytics().completionRate}%</strong> of features completed
+				</div>
+				<div class="summary-stat">
+					<strong>{analytics().statusCounts.in_progress}</strong> features in active development
+				</div>
+				{#if analytics().overdueFeatures.length > 0}
+					<div class="summary-stat risk">
+						<strong>{analytics().overdueFeatures.length}</strong> features overdue
+					</div>
+				{/if}
+				<div class="summary-narrative">
+					{#if analytics().momentum === 'strong'}
+						Team is delivering with strong momentum. {analytics().completedThisWeek} features shipped
+						this week.
+					{:else if analytics().momentum === 'steady'}
+						Steady progress with {analytics().statusCounts.in_progress} features in development.
+					{:else}
+						Consider reviewing priorities and removing blockers to improve delivery pace.
+					{/if}
+				</div>
+			</div>
+		</div>
+	</section>
 </div>
 
 <style>
-	.page-header {
-		margin-bottom: var(--space-8);
-		text-align: center;
-		max-width: 800px;
-		margin-left: auto;
-		margin-right: auto;
-	}
-
-	.page-header h1 {
-		margin-bottom: var(--space-4);
-		font-size: clamp(2.5rem, 5vw, 4rem);
-		font-weight: 800;
-		background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #475569 100%);
-		background-clip: text;
-		-webkit-background-clip: text;
-		-webkit-text-fill-color: transparent;
-		letter-spacing: -0.03em;
-		line-height: 1.1;
-	}
-
-	.page-header .text-muted {
-		font-size: var(--font-size-xl);
-		font-weight: 500;
-		color: var(--color-text-muted);
-		max-width: 700px;
-		margin: 0 auto;
-		line-height: 1.7;
-		letter-spacing: -0.01em;
-	}
-
-	.dashboard-content {
-		display: flex;
-		flex-direction: column;
-		gap: var(--space-8);
+	.dashboard {
 		max-width: 1400px;
 		margin: 0 auto;
-		padding: 0 var(--space-4);
+		padding: var(--space-6) var(--space-4);
+		background: var(--gray-50);
+		min-height: 100vh;
 	}
 
-	/* Metrics Overview */
-	.metrics-overview {
-		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+	/* Hero Banner */
+	.hero-banner {
+		background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+		border-radius: var(--radius-xl);
+		padding: var(--space-8);
+		margin-bottom: var(--space-8);
+		color: white;
+		position: relative;
+		overflow: hidden;
+	}
+
+	.hero-banner::before {
+		content: '';
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="white" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="white" opacity="0.1"/><circle cx="50" cy="10" r="0.5" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+		opacity: 0.3;
+	}
+
+	.hero-content {
+		position: relative;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		gap: var(--space-8);
+	}
+
+	.hero-main h1 {
+		font-size: clamp(2rem, 5vw, 3.5rem);
+		font-weight: 800;
+		margin-bottom: var(--space-3);
+		line-height: 1.1;
+		display: flex;
+		align-items: center;
+		gap: var(--space-3);
+	}
+
+	.momentum-indicator {
+		font-size: 0.8em;
+	}
+
+	.hero-subtitle {
+		font-size: var(--font-size-lg);
+		opacity: 0.9;
+		font-weight: 500;
+	}
+
+	.hero-metrics {
+		display: flex;
 		gap: var(--space-6);
 	}
 
-	.metric-card {
-		background: white;
-		border: 1px solid var(--color-border);
-		border-radius: var(--radius);
-		padding: var(--space-6);
-		display: flex;
-		align-items: center;
-		gap: var(--space-4);
-		box-shadow: var(--shadow);
-		transition: all 0.2s ease;
+	.hero-metric {
+		text-align: center;
+		padding: var(--space-4);
+		background: rgba(255, 255, 255, 0.1);
+		border-radius: var(--radius-lg);
+		backdrop-filter: blur(10px);
+		border: 1px solid rgba(255, 255, 255, 0.2);
 	}
 
-	.metric-card:hover {
-		transform: translateY(-2px);
-		box-shadow: 0 8px 25px -8px rgba(0, 0, 0, 0.1);
+	.hero-metric.highlight {
+		background: rgba(255, 255, 255, 0.2);
+		border: 2px solid rgba(255, 255, 255, 0.3);
 	}
 
-	.metric-icon {
-		width: 48px;
-		height: 48px;
-		border-radius: var(--radius);
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		color: white;
-		flex-shrink: 0;
-	}
-
-	.metric-content {
-		flex: 1;
-	}
-
-	.metric-value {
+	.hero-metric .metric-value {
 		font-size: var(--font-size-2xl);
 		font-weight: 700;
-		color: var(--color-text);
 		line-height: 1;
 	}
 
-	.metric-label {
+	.hero-metric .metric-label {
 		font-size: var(--font-size-sm);
-		color: var(--color-text-muted);
-		font-weight: 500;
-		margin-top: var(--space-2);
+		opacity: 0.8;
+		margin-top: var(--space-1);
 	}
 
-	/* Progress Charts */
-	.progress-charts {
+	/* Insights Section */
+	.insights-section {
+		margin-bottom: var(--space-8);
+	}
+
+	.insights-section h2 {
+		font-size: var(--font-size-xl);
+		font-weight: 700;
+		margin-bottom: var(--space-4);
+		color: var(--color-text);
+	}
+
+	.insights-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+		gap: var(--space-4);
+	}
+
+	.insight-card {
+		background: white;
+		border-radius: var(--radius-lg);
+		padding: var(--space-5);
+		border-left: 4px solid;
+		box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+		transition: all 0.2s ease;
+	}
+
+	.insight-card:hover {
+		transform: translateY(-2px);
+		box-shadow: 0 8px 25px -8px rgba(0, 0, 0, 0.15);
+	}
+
+	.insight-card.high {
+		border-left-color: #ef4444;
+	}
+	.insight-card.medium {
+		border-left-color: #f59e0b;
+	}
+	.insight-card.low {
+		border-left-color: #10b981;
+	}
+
+	.insight-header {
+		display: flex;
+		gap: var(--space-4);
+		align-items: flex-start;
+	}
+
+	.insight-icon {
+		font-size: var(--font-size-xl);
+		flex-shrink: 0;
+	}
+
+	.insight-content h3 {
+		font-size: var(--font-size-lg);
+		font-weight: 700;
+		margin-bottom: var(--space-2);
+		color: var(--color-text);
+	}
+
+	.insight-content p {
+		color: var(--color-text-muted);
+		margin-bottom: var(--space-3);
+		line-height: 1.5;
+	}
+
+	.insight-action {
+		font-size: var(--font-size-sm);
+		font-weight: 600;
+		color: var(--color-primary);
+		background: rgba(59, 130, 246, 0.1);
+		padding: var(--space-2) var(--space-3);
+		border-radius: var(--radius);
+		display: inline-block;
+	}
+
+	/* Progress Areas */
+	.progress-areas {
+		margin-bottom: var(--space-8);
+	}
+
+	.progress-grid {
 		display: grid;
 		grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
 		gap: var(--space-6);
 	}
 
-	.chart-card {
+	.area-card {
 		background: white;
-		border: 1px solid var(--color-border);
-		border-radius: var(--radius);
+		border-radius: var(--radius-lg);
 		padding: var(--space-6);
-		box-shadow: var(--shadow);
+		box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+		transition: all 0.2s ease;
 	}
 
-	.chart-card.wide {
-		grid-column: 1 / -1;
+	.area-card:hover {
+		transform: translateY(-2px);
+		box-shadow: 0 8px 25px -8px rgba(0, 0, 0, 0.15);
 	}
 
-	.chart-card h3 {
-		margin: 0 0 var(--space-6) 0;
-		font-size: var(--font-size-xl);
+	.area-card h3 {
+		font-size: var(--font-size-lg);
 		font-weight: 700;
+		margin-bottom: var(--space-5);
 		color: var(--color-text);
 	}
 
-	/* Status Chart */
-	.status-chart {
+	/* Pipeline Flow */
+	.pipeline-flow {
 		display: flex;
 		flex-direction: column;
 		gap: var(--space-4);
 	}
 
-	.status-bar {
+	.pipeline-stage {
 		display: flex;
 		flex-direction: column;
 		gap: var(--space-2);
 	}
 
-	.status-info {
+	.stage-header {
 		display: flex;
-		justify-content: space-between;
 		align-items: center;
-	}
-
-	.status-label {
+		gap: var(--space-3);
 		font-weight: 600;
-		color: var(--color-text);
+	}
+
+	.stage-emoji {
+		font-size: var(--font-size-lg);
+	}
+
+	.stage-name {
+		flex: 1;
 		text-transform: capitalize;
+		color: var(--color-text);
 	}
 
-	.status-count {
-		font-size: var(--font-size-sm);
+	.stage-count {
+		background: var(--gray-100);
 		color: var(--color-text-muted);
-		font-weight: 500;
+		padding: var(--space-1) var(--space-2);
+		border-radius: var(--radius);
+		font-size: var(--font-size-sm);
+		font-weight: 700;
 	}
 
-	.progress-bar {
+	.stage-bar {
 		height: 8px;
 		background: var(--gray-200);
 		border-radius: 4px;
 		overflow: hidden;
 	}
 
-	.progress-fill {
+	.stage-fill {
 		height: 100%;
 		border-radius: 4px;
 		transition: width 0.3s ease;
 	}
 
-	/* Priority Chart */
-	.priority-chart {
+	.stage-fill.planning {
+		background: #f59e0b;
+	}
+	.stage-fill.in_progress {
+		background: #3b82f6;
+	}
+	.stage-fill.testing {
+		background: #8b5cf6;
+	}
+	.stage-fill.completed {
+		background: #10b981;
+	}
+	.stage-fill.on_hold {
+		background: #6b7280;
+	}
+
+	/* Team Capacity */
+	.team-list {
 		display: flex;
 		flex-direction: column;
 		gap: var(--space-4);
 	}
 
-	.priority-item {
-		display: flex;
-		flex-direction: column;
-		gap: var(--space-2);
-	}
-
-	.priority-header {
-		display: flex;
-		align-items: center;
-		gap: var(--space-3);
-	}
-
-	.priority-dot {
-		width: 12px;
-		height: 12px;
-		border-radius: 50%;
-		flex-shrink: 0;
-	}
-
-	.priority-label {
-		flex: 1;
-		font-weight: 600;
-		color: var(--color-text);
-		text-transform: capitalize;
-	}
-
-	.priority-count {
-		font-size: var(--font-size-sm);
-		color: var(--color-text-muted);
-		font-weight: 500;
-	}
-
-	/* Category Analysis */
-	.category-grid {
-		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-		gap: var(--space-6);
-	}
-
-	.category-item {
-		text-align: center;
-	}
-
-	.category-visual {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		gap: var(--space-3);
-	}
-
-	.category-circle {
-		width: 80px;
-		height: 80px;
-		border-radius: 50%;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		color: white;
-		font-size: var(--font-size-xl);
-		font-weight: 700;
-		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-	}
-
-	.category-info {
-		text-align: center;
-	}
-
-	.category-name {
-		font-weight: 600;
-		color: var(--color-text);
-		text-transform: capitalize;
-	}
-
-	.category-percentage {
-		font-size: var(--font-size-sm);
-		color: var(--color-text-muted);
-		margin-top: var(--space-1);
-	}
-
-	/* Team Performance */
-	.team-grid {
-		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-		gap: var(--space-6);
-	}
-
 	.team-member {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		padding: var(--space-3);
 		background: var(--gray-50);
-		border: 1px solid var(--gray-200);
 		border-radius: var(--radius);
-		padding: var(--space-4);
+		transition: all 0.2s ease;
 	}
 
-	.member-header {
-		display: flex;
-		flex-direction: column;
-		gap: var(--space-3);
-		margin-bottom: var(--space-4);
+	.team-member.overloaded {
+		background: rgba(239, 68, 68, 0.1);
+		border: 1px solid rgba(239, 68, 68, 0.2);
 	}
 
 	.member-name {
 		font-weight: 600;
 		color: var(--color-text);
-		font-size: var(--font-size-lg);
+		margin-bottom: var(--space-1);
 	}
 
 	.member-stats {
-		display: flex;
-		gap: var(--space-4);
-	}
-
-	.stat-item {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		gap: var(--space-1);
-	}
-
-	.stat-value {
-		font-weight: 700;
-		color: var(--color-text);
-		font-size: var(--font-size-lg);
-	}
-
-	.stat-label {
 		font-size: var(--font-size-sm);
 		color: var(--color-text-muted);
-	}
-
-	.member-progress {
 		display: flex;
-		flex-direction: column;
+		align-items: center;
 		gap: var(--space-2);
 	}
 
-	.progress-header {
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-		font-size: var(--font-size-sm);
-		font-weight: 500;
-	}
-
-	/* Project Insights */
-	.insight-grid {
-		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-		gap: var(--space-6);
-	}
-
-	.insight-card {
-		background: white;
-		border: 1px solid var(--color-border);
+	.critical-badge,
+	.overdue-badge {
+		background: rgba(239, 68, 68, 0.1);
+		color: #dc2626;
+		padding: var(--space-1);
 		border-radius: var(--radius);
-		padding: var(--space-6);
-		box-shadow: var(--shadow);
+		font-size: 0.75rem;
+		font-weight: 600;
 	}
 
-	.insight-header {
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-		margin-bottom: var(--space-4);
-	}
-
-	.insight-header h4 {
-		margin: 0;
+	.capacity-indicator {
 		font-size: var(--font-size-lg);
+	}
+
+	/* Impact Visual */
+	.impact-visual {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: var(--space-4);
+	}
+
+	.circular-progress {
+		position: relative;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.progress-circle {
+		transition: stroke-dashoffset 0.5s ease;
+	}
+
+	.progress-text {
+		position: absolute;
+		text-align: center;
+	}
+
+	.progress-percent {
+		font-size: var(--font-size-xl);
 		font-weight: 700;
 		color: var(--color-text);
 	}
 
-	.health-indicator {
-		padding: var(--space-2) var(--space-3);
-		border-radius: var(--radius);
+	.progress-label {
 		font-size: var(--font-size-sm);
-		font-weight: 600;
-	}
-
-	.health-indicator.healthy {
-		background: rgba(16, 185, 129, 0.1);
-		color: #059669;
-	}
-
-	.health-indicator.warning {
-		background: rgba(245, 158, 11, 0.1);
-		color: #d97706;
-	}
-
-	.health-indicator.critical {
-		background: rgba(239, 68, 68, 0.1);
-		color: #dc2626;
-	}
-
-	.effort-stats {
-		font-weight: 600;
-		color: var(--color-primary);
-	}
-
-	.insight-card p {
 		color: var(--color-text-muted);
-		line-height: 1.6;
-		margin: 0;
 	}
 
-	.insight-card ul {
-		margin: 0;
-		padding-left: var(--space-5);
+	.impact-details {
+		text-align: center;
 		color: var(--color-text-muted);
-		line-height: 1.6;
+		font-size: var(--font-size-sm);
+		line-height: 1.5;
 	}
 
-	.insight-card li {
+	/* Activity Feed */
+	.activity-section {
+		margin-bottom: var(--space-8);
+	}
+
+	.activity-section h2 {
+		font-size: var(--font-size-xl);
+		font-weight: 700;
+		margin-bottom: var(--space-4);
+		color: var(--color-text);
+	}
+
+	.activity-feed {
+		background: white;
+		border-radius: var(--radius-lg);
+		padding: var(--space-6);
+		box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+	}
+
+	.activity-item {
+		display: flex;
+		gap: var(--space-4);
+		padding: var(--space-4) 0;
+		border-bottom: 1px solid var(--gray-200);
+	}
+
+	.activity-item:last-child {
+		border-bottom: none;
+	}
+
+	.activity-icon {
+		flex-shrink: 0;
+		width: 40px;
+		height: 40px;
+		background: var(--gray-100);
+		border-radius: 50%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		font-size: var(--font-size-lg);
+	}
+
+	.activity-title {
+		display: flex;
+		align-items: center;
+		gap: var(--space-2);
 		margin-bottom: var(--space-2);
+	}
+
+	.feature-title {
+		font-weight: 600;
+		color: var(--color-text);
+	}
+
+	.priority-badge {
+		font-size: var(--font-size-sm);
+	}
+
+	.activity-meta {
+		font-size: var(--font-size-sm);
+		color: var(--color-text-muted);
+	}
+
+	/* Executive Summary */
+	.executive-summary {
+		margin-bottom: var(--space-8);
+	}
+
+	.summary-card {
+		background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+		border-radius: var(--radius-lg);
+		padding: var(--space-6);
+		border: 1px solid var(--gray-200);
+	}
+
+	.summary-card h3 {
+		font-size: var(--font-size-lg);
+		font-weight: 700;
+		margin-bottom: var(--space-4);
+		color: var(--color-text);
+	}
+
+	.summary-content {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+		gap: var(--space-4);
+		margin-bottom: var(--space-4);
+	}
+
+	.summary-stat {
+		padding: var(--space-3);
+		background: white;
+		border-radius: var(--radius);
+		text-align: center;
+		border: 1px solid var(--gray-200);
+	}
+
+	.summary-stat.risk {
+		background: rgba(239, 68, 68, 0.1);
+		border-color: rgba(239, 68, 68, 0.2);
+	}
+
+	.summary-stat strong {
+		display: block;
+		font-size: var(--font-size-xl);
+		font-weight: 700;
+		color: var(--color-text);
+		margin-bottom: var(--space-1);
+	}
+
+	.summary-narrative {
+		grid-column: 1 / -1;
+		padding: var(--space-4);
+		background: white;
+		border-radius: var(--radius);
+		border: 1px solid var(--gray-200);
+		font-style: italic;
+		color: var(--color-text-muted);
+		line-height: 1.6;
 	}
 
 	/* Responsive Design */
 	@media (max-width: 1024px) {
-		.dashboard-content {
-			padding: 0 var(--space-3);
+		.hero-content {
+			flex-direction: column;
+			text-align: center;
 			gap: var(--space-6);
 		}
 
-		.metrics-overview {
-			grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-			gap: var(--space-4);
-		}
-
-		.progress-charts {
+		.insights-grid {
 			grid-template-columns: 1fr;
-			gap: var(--space-6);
 		}
 
-		.category-grid {
-			grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-			gap: var(--space-4);
+		.progress-grid {
+			grid-template-columns: 1fr;
 		}
 
-		.team-grid {
-			grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-			gap: var(--space-4);
+		.summary-content {
+			grid-template-columns: 1fr;
 		}
 	}
 
 	@media (max-width: 768px) {
-		.page-header h1 {
-			font-size: clamp(2rem, 6vw, 3rem);
+		.dashboard {
+			padding: var(--space-4) var(--space-2);
 		}
 
-		.page-header .text-muted {
-			font-size: var(--font-size-lg);
+		.hero-banner {
+			padding: var(--space-6) var(--space-4);
 		}
 
-		.dashboard-content {
-			padding: 0 var(--space-2);
-			gap: var(--space-5);
+		.hero-main h1 {
+			font-size: clamp(1.5rem, 6vw, 2.5rem);
 		}
 
-		.metrics-overview {
+		.hero-metrics {
+			flex-direction: row;
+			justify-content: center;
+		}
+
+		.insights-grid {
 			grid-template-columns: 1fr;
-			gap: var(--space-3);
 		}
 
-		.metric-card {
+		.area-card {
 			padding: var(--space-4);
-			gap: var(--space-3);
-		}
-
-		.metric-icon {
-			width: 40px;
-			height: 40px;
-		}
-
-		.category-grid {
-			grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-			gap: var(--space-3);
-		}
-
-		.category-circle {
-			width: 60px;
-			height: 60px;
-			font-size: var(--font-size-lg);
-		}
-
-		.team-grid {
-			grid-template-columns: 1fr;
-			gap: var(--space-4);
-		}
-
-		.insight-grid {
-			grid-template-columns: 1fr;
-			gap: var(--space-4);
 		}
 	}
 </style>

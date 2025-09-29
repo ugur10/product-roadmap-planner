@@ -18,22 +18,33 @@
 
 	function getPriorityColor(priority: Feature['priority']): string {
 		switch (priority) {
-			case 'critical': return 'var(--color-danger)';
-			case 'high': return 'var(--color-warning)';
-			case 'medium': return 'var(--color-primary)';
-			case 'low': return 'var(--color-success)';
-			default: return 'var(--color-text-muted)';
+			case 'critical':
+				return 'var(--color-danger)';
+			case 'high':
+				return 'var(--color-warning)';
+			case 'medium':
+				return 'var(--color-primary)';
+			case 'low':
+				return 'var(--color-success)';
+			default:
+				return 'var(--color-text-muted)';
 		}
 	}
 
 	function getStatusColor(status: Feature['status']): string {
 		switch (status) {
-			case 'completed': return 'var(--color-success)';
-			case 'in_progress': return 'var(--color-primary)';
-			case 'testing': return 'var(--color-warning)';
-			case 'planning': return 'var(--color-text-muted)';
-			case 'on_hold': return 'var(--color-danger)';
-			default: return 'var(--color-text-muted)';
+			case 'completed':
+				return 'var(--color-success)';
+			case 'in_progress':
+				return 'var(--color-primary)';
+			case 'testing':
+				return 'var(--color-warning)';
+			case 'planning':
+				return 'var(--color-text-muted)';
+			case 'on_hold':
+				return 'var(--color-danger)';
+			default:
+				return 'var(--color-text-muted)';
 		}
 	}
 
@@ -42,7 +53,7 @@
 	}
 
 	function formatStatus(status: Feature['status']): string {
-		return status.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase());
+		return status.replace('_', ' ').replace(/\b\w/g, (l) => l.toUpperCase());
 	}
 
 	function formatPriority(priority: Feature['priority']): string {
@@ -77,25 +88,51 @@
 				<h3>{feature.title}</h3>
 			</button>
 			<div class="badges">
-				<span class="badge priority" style="background-color: {getPriorityColor(feature.priority)}20; color: {getPriorityColor(feature.priority)}">
+				<span
+					class="badge priority"
+					style="background-color: {getPriorityColor(feature.priority)}20; color: {getPriorityColor(
+						feature.priority
+					)}"
+				>
 					{formatPriority(feature.priority)}
 				</span>
-				<span class="badge status" style="background-color: {getStatusColor(feature.status)}20; color: {getStatusColor(feature.status)}">
+				<span
+					class="badge status"
+					style="background-color: {getStatusColor(feature.status)}20; color: {getStatusColor(
+						feature.status
+					)}"
+				>
 					{formatStatus(feature.status)}
 				</span>
 			</div>
 		</div>
 		<div class="card-actions">
 			<button class="btn-icon" onclick={() => onEdit?.(feature)} aria-label="Edit feature">
-				<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+				<svg
+					width="16"
+					height="16"
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="2"
+				>
 					<path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
 					<path d="m18.5 2.5 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
 				</svg>
 			</button>
 			<button class="btn-icon btn-danger" onclick={handleDelete} aria-label="Delete feature">
-				<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+				<svg
+					width="16"
+					height="16"
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="2"
+				>
 					<polyline points="3,6 5,6 21,6"></polyline>
-					<path d="m19,6v14a2,2 0 0,1 -2,2H7a2,2 0 0,1 -2,-2V6m3,0V4a2,2 0 0,1 2,-2h4a2,2 0 0,1 2,2v2"></path>
+					<path
+						d="m19,6v14a2,2 0 0,1 -2,2H7a2,2 0 0,1 -2,-2V6m3,0V4a2,2 0 0,1 2,-2h4a2,2 0 0,1 2,2v2"
+					></path>
 				</svg>
 			</button>
 		</div>
@@ -172,7 +209,6 @@
 	.card-title {
 		flex: 1;
 	}
-
 
 	.title-button {
 		background: none;

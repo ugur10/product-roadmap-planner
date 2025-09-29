@@ -23,7 +23,7 @@
 
 	// Get features with matrix positions, assigning defaults where missing
 	const matrixFeatures = $derived(() => {
-		return featuresStore.features.map(feature => {
+		return featuresStore.features.map((feature) => {
 			if (!feature.matrix) {
 				return {
 					...feature,
@@ -147,7 +147,9 @@
 			{#each quadrants as quadrant}
 				<div
 					class="quadrant-label"
-					style="left: {quadrant.x}%; top: {quadrant.y}%; background-color: {getQuadrantColor(quadrant.key)}20"
+					style="left: {quadrant.x}%; top: {quadrant.y}%; background-color: {getQuadrantColor(
+						quadrant.key
+					)}20"
 				>
 					<div class="quadrant-name" style="color: {getQuadrantColor(quadrant.key)}">
 						{getQuadrantName(quadrant.key)}
@@ -171,8 +173,10 @@
 					onkeydown={(e) => e.key === 'Enter' && handleFeatureClick(feature)}
 					role="button"
 					tabindex="0"
-					aria-label="Feature: {feature.title} - Impact: {feature.matrix?.impact || 3}, Effort: {feature.matrix?.effort || 3}"
-					title="{feature.title} - Impact: {feature.matrix?.impact || 3}, Effort: {feature.matrix?.effort || 3}"
+					aria-label="Feature: {feature.title} - Impact: {feature.matrix?.impact ||
+						3}, Effort: {feature.matrix?.effort || 3}"
+					title="{feature.title} - Impact: {feature.matrix?.impact || 3}, Effort: {feature.matrix
+						?.effort || 3}"
 				>
 					<div class="feature-info">
 						<div class="feature-title">{feature.title}</div>
@@ -198,7 +202,10 @@
 		<div class="legend-items">
 			{#each quadrants as quadrant}
 				<div class="legend-item">
-					<div class="legend-color" style="background-color: {getQuadrantColor(quadrant.key)}"></div>
+					<div
+						class="legend-color"
+						style="background-color: {getQuadrantColor(quadrant.key)}"
+					></div>
 					<div class="legend-text">
 						<span class="legend-name">{getQuadrantName(quadrant.key)}</span>
 						<span class="legend-desc">{getQuadrantDescription(quadrant.key)}</span>

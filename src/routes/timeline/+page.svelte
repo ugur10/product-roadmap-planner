@@ -29,13 +29,13 @@
 		const grouped: Record<string, any[]> = {};
 
 		// Initialize all quarters
-		quarters.forEach(quarter => {
+		quarters.forEach((quarter) => {
 			grouped[quarter.id] = [];
 		});
 		grouped['backlog'] = [];
 
 		// Group features by quarter
-		featuresStore.features.forEach(feature => {
+		featuresStore.features.forEach((feature) => {
 			if (feature.dueDate) {
 				const dueDate = new Date(feature.dueDate);
 				const year = dueDate.getFullYear();
@@ -55,25 +55,33 @@
 		return grouped;
 	});
 
-
 	// Get status color for feature cards
 	function getStatusColor(status: string) {
 		switch (status) {
-			case 'completed': return 'var(--green-500)';
-			case 'in_progress': return 'var(--blue-500)';
-			case 'testing': return 'var(--amber-500)';
-			case 'on_hold': return 'var(--red-500)';
-			default: return 'var(--gray-500)';
+			case 'completed':
+				return 'var(--green-500)';
+			case 'in_progress':
+				return 'var(--blue-500)';
+			case 'testing':
+				return 'var(--amber-500)';
+			case 'on_hold':
+				return 'var(--red-500)';
+			default:
+				return 'var(--gray-500)';
 		}
 	}
 
 	// Get priority styling
 	function getPriorityClass(priority: string) {
 		switch (priority) {
-			case 'critical': return 'priority-critical';
-			case 'high': return 'priority-high';
-			case 'medium': return 'priority-medium';
-			default: return 'priority-low';
+			case 'critical':
+				return 'priority-critical';
+			case 'high':
+				return 'priority-high';
+			case 'medium':
+				return 'priority-medium';
+			default:
+				return 'priority-low';
 		}
 	}
 
@@ -155,27 +163,34 @@
 
 	<div class="timeline-container">
 		<!-- Backlog Section -->
-		<div class="quarter-section backlog {dragOverQuarter === 'backlog' ? 'drag-over' : ''}"
-			 role="region"
-			 aria-label="Backlog - Drop zone for unscheduled features"
-			 ondragover={handleDragOver}
-			 ondragenter={(e) => handleDragEnter(e, 'backlog')}
-			 ondragleave={handleDragLeave}
-			 ondrop={(e) => handleDrop(e, 'backlog')}>
+		<div
+			class="quarter-section backlog {dragOverQuarter === 'backlog' ? 'drag-over' : ''}"
+			role="region"
+			aria-label="Backlog - Drop zone for unscheduled features"
+			ondragover={handleDragOver}
+			ondragenter={(e) => handleDragEnter(e, 'backlog')}
+			ondragleave={handleDragLeave}
+			ondrop={(e) => handleDrop(e, 'backlog')}
+		>
 			<div class="quarter-header">
 				<h3>Backlog</h3>
 				<span class="feature-count">{featuresByQuarter['backlog']?.length || 0} features</span>
 			</div>
 			<div class="features-container">
 				{#each featuresByQuarter['backlog'] || [] as feature (feature.id)}
-					<div class="feature-card {getPriorityClass(feature.priority)}"
-						 role="button"
-						 tabindex="0"
-						 aria-label="Feature: {feature.title} - Drag to move between quarters"
-						 draggable="true"
-						 ondragstart={(e) => handleDragStart(e, feature)}
-						 ondragend={handleDragEnd}>
-						<div class="feature-status" style="background-color: {getStatusColor(feature.status)}"></div>
+					<div
+						class="feature-card {getPriorityClass(feature.priority)}"
+						role="button"
+						tabindex="0"
+						aria-label="Feature: {feature.title} - Drag to move between quarters"
+						draggable="true"
+						ondragstart={(e) => handleDragStart(e, feature)}
+						ondragend={handleDragEnd}
+					>
+						<div
+							class="feature-status"
+							style="background-color: {getStatusColor(feature.status)}"
+						></div>
 						<div class="feature-content">
 							<h4>{feature.title}</h4>
 							<p class="feature-description">{feature.description}</p>
@@ -192,27 +207,34 @@
 		<!-- Quarterly Timeline -->
 		<div class="timeline">
 			{#each quarters as quarter (quarter.id)}
-				<div class="quarter-section {dragOverQuarter === quarter.id ? 'drag-over' : ''}"
-					 role="region"
-					 aria-label="{quarter.label} - Drop zone for features scheduled in this quarter"
-					 ondragover={handleDragOver}
-					 ondragenter={(e) => handleDragEnter(e, quarter.id)}
-					 ondragleave={handleDragLeave}
-					 ondrop={(e) => handleDrop(e, quarter.id)}>
+				<div
+					class="quarter-section {dragOverQuarter === quarter.id ? 'drag-over' : ''}"
+					role="region"
+					aria-label="{quarter.label} - Drop zone for features scheduled in this quarter"
+					ondragover={handleDragOver}
+					ondragenter={(e) => handleDragEnter(e, quarter.id)}
+					ondragleave={handleDragLeave}
+					ondrop={(e) => handleDrop(e, quarter.id)}
+				>
 					<div class="quarter-header">
 						<h3>{quarter.label}</h3>
 						<span class="feature-count">{featuresByQuarter[quarter.id]?.length || 0} features</span>
 					</div>
 					<div class="features-container">
 						{#each featuresByQuarter[quarter.id] || [] as feature (feature.id)}
-							<div class="feature-card {getPriorityClass(feature.priority)}"
-								 role="button"
-								 tabindex="0"
-								 aria-label="Feature: {feature.title} - Drag to move between quarters"
-								 draggable="true"
-								 ondragstart={(e) => handleDragStart(e, feature)}
-								 ondragend={handleDragEnd}>
-								<div class="feature-status" style="background-color: {getStatusColor(feature.status)}"></div>
+							<div
+								class="feature-card {getPriorityClass(feature.priority)}"
+								role="button"
+								tabindex="0"
+								aria-label="Feature: {feature.title} - Drag to move between quarters"
+								draggable="true"
+								ondragstart={(e) => handleDragStart(e, feature)}
+								ondragend={handleDragEnd}
+							>
+								<div
+									class="feature-status"
+									style="background-color: {getStatusColor(feature.status)}"
+								></div>
 								<div class="feature-content">
 									<h4>{feature.title}</h4>
 									<p class="feature-description">{feature.description}</p>
@@ -220,7 +242,9 @@
 										<span class="feature-assignee">{feature.assignee || 'Unassigned'}</span>
 										<span class="feature-hours">{feature.estimatedHours}h</span>
 										{#if feature.dueDate}
-											<span class="feature-due">{new Date(feature.dueDate).toLocaleDateString()}</span>
+											<span class="feature-due"
+												>{new Date(feature.dueDate).toLocaleDateString()}</span
+											>
 										{/if}
 									</div>
 								</div>
@@ -331,7 +355,7 @@
 		cursor: grabbing;
 	}
 
-	.feature-card[draggable="true"]:active {
+	.feature-card[draggable='true']:active {
 		opacity: 0.5;
 		transform: rotate(5deg);
 		z-index: 1000;

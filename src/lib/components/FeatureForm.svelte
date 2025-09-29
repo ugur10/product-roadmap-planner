@@ -122,7 +122,13 @@
 			<button class="btn-close" onclick={onClose} aria-label="Close">×</button>
 		</div>
 
-		<form class="modal-body" onsubmit={(e) => { e.preventDefault(); handleSubmit(); }}>
+		<form
+			class="modal-body"
+			onsubmit={(e) => {
+				e.preventDefault();
+				handleSubmit();
+			}}
+		>
 			<div class="form-group">
 				<label for="title">Title *</label>
 				<input
@@ -212,12 +218,7 @@
 
 			<div class="form-group">
 				<label for="dueDate">Due Date</label>
-				<input
-					id="dueDate"
-					type="date"
-					bind:value={dueDate}
-					class:error={errors.dueDate}
-				/>
+				<input id="dueDate" type="date" bind:value={dueDate} class:error={errors.dueDate} />
 				{#if errors.dueDate}
 					<span class="error-message">{errors.dueDate}</span>
 				{/if}
@@ -255,9 +256,7 @@
 			</div>
 
 			<div class="modal-footer">
-				<button type="button" class="btn btn-secondary" onclick={onClose}>
-					Cancel
-				</button>
+				<button type="button" class="btn btn-secondary" onclick={onClose}> Cancel </button>
 				<button type="submit" class="btn btn-primary">
 					{feature ? 'Update' : 'Create'} Feature
 				</button>

@@ -94,7 +94,9 @@
 									<p>{feature.description}</p>
 									<div class="feature-meta">
 										<span class="badge priority-{feature.priority}">{feature.priority}</span>
-										<span class="badge status-{feature.status}">{feature.status.replace('_', ' ')}</span>
+										<span class="badge status-{feature.status}"
+											>{feature.status.replace('_', ' ')}</span
+										>
 									</div>
 								</div>
 							</div>
@@ -114,10 +116,7 @@
 {/if}
 
 {#if showForm}
-	<FeatureForm
-		feature={null}
-		onClose={handleCloseForm}
-	/>
+	<FeatureForm feature={null} onClose={handleCloseForm} />
 {/if}
 
 <style>

@@ -92,7 +92,7 @@ describe('Features Store', () => {
 			const originalUpdatedAt = feature.updatedAt;
 
 			// Wait a bit to ensure timestamp difference
-			await new Promise(resolve => setTimeout(resolve, 10));
+			await new Promise((resolve) => setTimeout(resolve, 10));
 
 			const updatedFeature = featuresStore.updateFeature(feature.id, {
 				title: 'Updated Title'
@@ -127,7 +127,7 @@ describe('Features Store', () => {
 
 			expect(result).toBe(true);
 			expect(featuresStore.features.length).toBe(initialCount - 1);
-			expect(featuresStore.features.find(f => f.id === feature.id)).toBeUndefined();
+			expect(featuresStore.features.find((f) => f.id === feature.id)).toBeUndefined();
 		});
 
 		it('should return false for non-existent feature', () => {
@@ -299,18 +299,20 @@ describe('Features Store', () => {
 		});
 
 		it('should load existing data from localStorage', () => {
-			const testFeatures = [{
-				id: 'test-1',
-				title: 'Stored Feature',
-				description: 'From localStorage',
-				priority: 'high',
-				status: 'planning',
-				category: 'frontend',
-				estimatedHours: 10,
-				createdAt: new Date().toISOString(),
-				updatedAt: new Date().toISOString(),
-				matrix: { impact: 4, effort: 3 }
-			}];
+			const testFeatures = [
+				{
+					id: 'test-1',
+					title: 'Stored Feature',
+					description: 'From localStorage',
+					priority: 'high',
+					status: 'planning',
+					category: 'frontend',
+					estimatedHours: 10,
+					createdAt: new Date().toISOString(),
+					updatedAt: new Date().toISOString(),
+					matrix: { impact: 4, effort: 3 }
+				}
+			];
 
 			localStorage.setItem('roadmap-features', JSON.stringify(testFeatures));
 			(featuresStore as any).reset();
