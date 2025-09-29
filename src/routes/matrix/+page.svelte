@@ -197,7 +197,7 @@
 	.matrix-content {
 		display: flex;
 		flex-direction: column;
-		gap: var(--space-8);
+		gap: var(--space-12);
 		max-width: 1400px;
 		margin: 0 auto;
 		padding: 0 var(--space-6);
@@ -209,17 +209,14 @@
 	}
 
 	.instruction-card {
-		background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
-		border: 1px solid var(--gray-200);
+		background: var(--gradient-subtle);
+		border: 1px solid var(--color-border-subtle);
 		border-radius: var(--radius-2xl);
-		padding: var(--space-8) var(--space-10);
-		max-width: 900px;
+		padding: var(--space-10) var(--space-12);
+		max-width: 1000px;
 		width: 100%;
-		box-shadow:
-			0 4px 6px -1px rgba(0, 0, 0, 0.1),
-			0 2px 4px -1px rgba(0, 0, 0, 0.06),
-			inset 0 1px 0 rgba(255, 255, 255, 0.1);
-		border-top: 3px solid var(--color-primary);
+		box-shadow: var(--shadow-lg);
+		border-top: 4px solid var(--color-primary);
 	}
 
 	.instruction-card h3 {
@@ -236,8 +233,8 @@
 		padding: 0;
 		list-style: none;
 		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-		gap: var(--space-4);
+		grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+		gap: var(--space-6);
 	}
 
 	.instruction-card li {
@@ -276,13 +273,13 @@
 	}
 
 	.insight-card {
-		background: white;
-		border: 1px solid var(--gray-200);
-		border-radius: var(--radius-lg);
-		padding: var(--space-6);
-		max-width: 1000px;
+		background: var(--color-surface);
+		border: 1px solid var(--color-border-subtle);
+		border-radius: var(--radius-2xl);
+		padding: var(--space-8);
+		max-width: 1200px;
 		width: 100%;
-		box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+		box-shadow: var(--shadow-lg);
 	}
 
 	.insight-card h3 {
@@ -296,9 +293,9 @@
 
 	.insights-grid {
 		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-		gap: var(--space-8);
-		margin-top: var(--space-2);
+		grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+		gap: var(--space-10);
+		margin-top: var(--space-4);
 	}
 
 	.insight {

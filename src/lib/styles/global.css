@@ -1,58 +1,153 @@
 /* Professional Product Roadmap Planner - Lean CSS */
 
 :root {
-	/* Professional Color Palette */
-	--gray-50: #f9fafb;
-	--gray-100: #f3f4f6;
-	--gray-200: #e5e7eb;
-	--gray-300: #d1d5db;
-	--gray-500: #6b7280;
-	--gray-600: #4b5563;
-	--gray-700: #374151;
-	--gray-900: #111827;
+	/* Modern Color Palette - Based on contemporary design systems */
+	--gray-25: #fcfcfd;
+	--gray-50: #f8fafc;
+	--gray-100: #f1f5f9;
+	--gray-200: #e2e8f0;
+	--gray-300: #cbd5e1;
+	--gray-400: #94a3b8;
+	--gray-500: #64748b;
+	--gray-600: #475569;
+	--gray-700: #334155;
+	--gray-800: #1e293b;
+	--gray-900: #0f172a;
+	--gray-950: #020617;
 
-	--blue-500: #3b82f6;
-	--blue-600: #2563eb;
-	--blue-700: #1d4ed8;
+	/* Brand Colors - Modern, accessible palette */
+	--indigo-50: #eef2ff;
+	--indigo-100: #e0e7ff;
+	--indigo-500: #6366f1;
+	--indigo-600: #4f46e5;
+	--indigo-700: #4338ca;
+	--indigo-900: #312e81;
 
-	--green-500: #10b981;
-	--red-500: #ef4444;
+	/* Status Colors - Refined and accessible */
+	--emerald-50: #ecfdf5;
+	--emerald-100: #d1fae5;
+	--emerald-500: #10b981;
+	--emerald-600: #059669;
+	--emerald-700: #047857;
+
+	--rose-50: #fff1f2;
+	--rose-100: #ffe4e6;
+	--rose-500: #f43f5e;
+	--rose-600: #e11d48;
+	--rose-700: #be185d;
+
+	--amber-50: #fffbeb;
+	--amber-100: #fef3c7;
 	--amber-500: #f59e0b;
+	--amber-600: #d97706;
+	--amber-700: #b45309;
+
+	--violet-50: #f5f3ff;
+	--violet-100: #ede9fe;
+	--violet-500: #8b5cf6;
+	--violet-600: #7c3aed;
+	--violet-700: #6d28d9;
 
 	/* Semantic Colors */
-	--color-bg: white;
+	--color-bg: var(--gray-25);
 	--color-surface: white;
+	--color-surface-elevated: white;
 	--color-border: var(--gray-200);
+	--color-border-subtle: var(--gray-100);
 	--color-text: var(--gray-900);
 	--color-text-muted: var(--gray-600);
-	--color-primary: var(--blue-600);
-	--color-primary-hover: var(--blue-700);
+	--color-text-subtle: var(--gray-500);
+	--color-primary: var(--indigo-600);
+	--color-primary-hover: var(--indigo-700);
+	--color-primary-light: var(--indigo-100);
+
+	/* Status Colors */
+	--color-success: var(--emerald-600);
+	--color-success-light: var(--emerald-100);
+	--color-warning: var(--amber-600);
+	--color-warning-light: var(--amber-100);
+	--color-danger: var(--rose-600);
+	--color-danger-light: var(--rose-100);
+	--color-info: var(--violet-600);
+	--color-info-light: var(--violet-100);
 
 	/* Typography */
 	--font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+	--font-size-xs: 0.75rem;
 	--font-size-sm: 0.875rem;
 	--font-size-base: 1rem;
 	--font-size-lg: 1.125rem;
 	--font-size-xl: 1.25rem;
 	--font-size-2xl: 1.5rem;
+	--font-size-3xl: 1.875rem;
+	--font-size-4xl: 2.25rem;
 
-	/* Spacing */
+	/* Font weights */
+	--font-weight-normal: 400;
+	--font-weight-medium: 500;
+	--font-weight-semibold: 600;
+	--font-weight-bold: 700;
+
+	/* Spacing - Modern spacing scale */
+	--space-px: 1px;
+	--space-0-5: 0.125rem;
 	--space-1: 0.25rem;
+	--space-1-5: 0.375rem;
 	--space-2: 0.5rem;
+	--space-2-5: 0.625rem;
 	--space-3: 0.75rem;
+	--space-3-5: 0.875rem;
 	--space-4: 1rem;
 	--space-5: 1.25rem;
 	--space-6: 1.5rem;
+	--space-7: 1.75rem;
 	--space-8: 2rem;
+	--space-9: 2.25rem;
 	--space-10: 2.5rem;
+	--space-11: 2.75rem;
 	--space-12: 3rem;
+	--space-14: 3.5rem;
+	--space-16: 4rem;
+	--space-20: 5rem;
+	--space-24: 6rem;
 
-	/* Layout */
-	--radius: 0.375rem;
+	/* Border radius */
+	--radius-none: 0;
+	--radius-sm: 0.125rem;
+	--radius: 0.25rem;
+	--radius-md: 0.375rem;
 	--radius-lg: 0.5rem;
 	--radius-xl: 0.75rem;
 	--radius-2xl: 1rem;
-	--shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+	--radius-3xl: 1.5rem;
+	--radius-full: 9999px;
+
+	/* Modern shadow system */
+	--shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+	--shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+	--shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
+	--shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+	--shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+	--shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+	--shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+	--shadow-inner: inset 0 2px 4px 0 rgba(0, 0, 0, 0.05);
+
+	/* Gradients */
+	--gradient-primary: linear-gradient(135deg, var(--indigo-600) 0%, var(--violet-600) 100%);
+	--gradient-success: linear-gradient(135deg, var(--emerald-500) 0%, var(--emerald-600) 100%);
+	--gradient-warning: linear-gradient(135deg, var(--amber-500) 0%, var(--amber-600) 100%);
+	--gradient-danger: linear-gradient(135deg, var(--rose-500) 0%, var(--rose-600) 100%);
+	--gradient-subtle: linear-gradient(135deg, var(--gray-25) 0%, var(--gray-50) 100%);
+
+	/* Animation durations */
+	--duration-75: 75ms;
+	--duration-100: 100ms;
+	--duration-150: 150ms;
+	--duration-200: 200ms;
+	--duration-300: 300ms;
+	--duration-500: 500ms;
+	--duration-700: 700ms;
+	--duration-1000: 1000ms;
 }
 
 /* Reset & Base */
@@ -68,9 +163,10 @@ body {
 	font-family: var(--font-sans);
 	font-size: var(--font-size-base);
 	color: var(--color-text);
-	background-color: var(--gray-50);
-	line-height: 1.5;
+	background: var(--gradient-subtle);
+	line-height: 1.6;
 	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
 }
 
 /* Layout Components */
@@ -85,33 +181,40 @@ body {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	padding: var(--space-3) var(--space-4);
+	padding: var(--space-3) var(--space-5);
 	font-size: var(--font-size-sm);
-	font-weight: 500;
+	font-weight: var(--font-weight-semibold);
 	border: 1px solid transparent;
-	border-radius: var(--radius);
+	border-radius: var(--radius-lg);
 	cursor: pointer;
-	transition: all 0.15s ease;
+	transition: all var(--duration-200) cubic-bezier(0.4, 0, 0.2, 1);
 	text-decoration: none;
+	position: relative;
+	overflow: hidden;
 }
 
 .btn-primary {
-	background: var(--color-primary);
+	background: var(--gradient-primary);
 	color: white;
+	box-shadow: var(--shadow-md);
 }
 
 .btn-primary:hover {
-	background: var(--color-primary-hover);
+	transform: translateY(-1px);
+	box-shadow: var(--shadow-lg);
 }
 
 .btn-secondary {
 	background: var(--color-surface);
 	color: var(--color-text);
 	border-color: var(--color-border);
+	box-shadow: var(--shadow-sm);
 }
 
 .btn-secondary:hover {
-	background: var(--gray-50);
+	background: var(--gradient-subtle);
+	transform: translateY(-1px);
+	box-shadow: var(--shadow-md);
 }
 
 .btn-sm {

@@ -101,12 +101,12 @@
 		onFeatureSelect?.(feature);
 	}
 
-	// Quadrant data for labels
+	// Quadrant data for labels - positioned further from center to avoid overlap
 	const quadrants = [
-		{ key: 'quick_wins', x: 25, y: 25 },
-		{ key: 'major_projects', x: 75, y: 25 },
-		{ key: 'fill_ins', x: 25, y: 75 },
-		{ key: 'money_pit', x: 75, y: 75 }
+		{ key: 'quick_wins', x: 25, y: 20 },
+		{ key: 'major_projects', x: 75, y: 20 },
+		{ key: 'fill_ins', x: 25, y: 80 },
+		{ key: 'money_pit', x: 75, y: 80 }
 	] as const;
 </script>
 
@@ -244,51 +244,65 @@
 
 	.matrix-wrapper {
 		display: grid;
-		grid-template-columns: 80px 600px;
-		grid-template-rows: 600px 80px;
-		gap: var(--space-4);
+		grid-template-columns: 140px minmax(600px, 800px);
+		grid-template-rows: minmax(600px, 800px) 140px;
+		gap: var(--space-8);
 		margin: 0 auto;
 		justify-content: center;
+		width: 100%;
+		max-width: 1200px;
+		padding: var(--space-8);
 	}
 
 	.axis-label {
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		font-weight: 600;
+		font-weight: var(--font-weight-bold);
 		color: var(--color-text);
-		font-size: var(--font-size-sm);
+		font-size: var(--font-size-lg);
+		letter-spacing: -0.025em;
+		position: relative;
 	}
 
 	.y-axis {
 		writing-mode: vertical-rl;
 		text-orientation: mixed;
 		flex-direction: column;
+		position: relative;
 	}
 
 	.x-axis {
 		grid-column: 2;
+		position: relative;
 	}
 
 	.axis-scale {
+		position: absolute;
 		display: flex;
-		justify-content: space-between;
-		margin-top: var(--space-2);
-		font-size: var(--font-size-xs);
-		color: var(--color-text-muted);
-		font-weight: normal;
+		font-size: var(--font-size-sm);
+		color: var(--color-text);
+		font-weight: var(--font-weight-semibold);
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
 	}
 
 	.axis-scale.horizontal {
-		width: 100%;
-		margin-top: var(--space-2);
+		bottom: -40px;
+		left: 0;
+		right: 0;
+		justify-content: space-between;
+		padding: 0 var(--space-2);
 	}
 
 	.y-axis .axis-scale {
 		writing-mode: horizontal-tb;
+		right: -60px;
+		top: 0;
+		bottom: 0;
 		flex-direction: column;
-		height: 100px;
-		margin-top: var(--space-4);
+		justify-content: space-between;
+		padding: var(--space-2) 0;
 	}
 
 	.matrix {
@@ -341,47 +355,56 @@
 		position: absolute;
 		transform: translate(-50%, -50%);
 		padding: var(--space-4) var(--space-5);
-		border-radius: var(--radius-lg);
+		border-radius: var(--radius-xl);
 		text-align: center;
 		pointer-events: none;
-		border: 1px solid rgba(255, 255, 255, 0.2);
-		background: rgba(255, 255, 255, 0.95);
-		backdrop-filter: blur(8px);
+		border: 1px solid var(--color-border-subtle);
+		background: rgba(255, 255, 255, 0.96);
+		backdrop-filter: blur(16px);
 		min-width: 160px;
-		box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+		max-width: 200px;
+		width: fit-content;
+		box-shadow: var(--shadow-lg);
+		z-index: 5;
+		white-space: nowrap;
 	}
 
 	.quadrant-name {
-		font-weight: 700;
+		font-weight: var(--font-weight-bold);
 		font-size: var(--font-size-base);
-		margin-bottom: var(--space-2);
-		letter-spacing: -0.025em;
+		margin-bottom: var(--space-3);
+		letter-spacing: -0.015em;
+		line-height: 1.2;
+		white-space: nowrap;
 	}
 
 	.quadrant-description {
 		font-size: var(--font-size-sm);
 		color: var(--color-text-muted);
 		line-height: 1.4;
-		font-weight: 500;
+		font-weight: var(--font-weight-medium);
+		white-space: normal;
+		max-width: 180px;
+		word-wrap: break-word;
+		hyphens: auto;
 	}
 
 	.feature-dot {
 		position: absolute;
-		width: 40px;
-		height: 40px;
+		width: 44px;
+		height: 44px;
 		border-radius: 50%;
 		transform: translate(-50%, -50%);
 		cursor: grab;
-		box-shadow:
-			0 4px 6px -1px rgba(0, 0, 0, 0.1),
-			0 2px 4px -1px rgba(0, 0, 0, 0.06);
-		border: 3px solid white;
+		box-shadow: var(--shadow-lg);
+		border: 2px solid var(--color-surface);
 		z-index: 10;
-		transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+		transition: all var(--duration-300) cubic-bezier(0.4, 0, 0.2, 1);
 		display: flex;
 		align-items: center;
 		justify-content: center;
 		position: relative;
+		backdrop-filter: blur(4px);
 	}
 
 	.feature-dot::before {
@@ -397,24 +420,23 @@
 	}
 
 	.feature-dot:hover {
-		transform: translate(-50%, -50%) scale(1.15);
-		box-shadow:
-			0 20px 25px -5px rgba(0, 0, 0, 0.1),
-			0 10px 10px -5px rgba(0, 0, 0, 0.04);
+		transform: translate(-50%, -50%) scale(1.1);
+		box-shadow: var(--shadow-xl);
 		z-index: 20;
+		border-color: var(--color-primary-light);
 	}
 
 	.feature-dot:hover::before {
-		transform: scale(1.5);
+		transform: scale(1.3);
+		opacity: 0.3;
 	}
 
 	.feature-dot.dragging {
 		cursor: grabbing;
-		transform: translate(-50%, -50%) scale(1.2);
-		box-shadow:
-			0 25px 50px -12px rgba(0, 0, 0, 0.25),
-			0 20px 25px -5px rgba(0, 0, 0, 0.1);
+		transform: translate(-50%, -50%) scale(1.15);
+		box-shadow: var(--shadow-2xl);
 		z-index: 30;
+		border-color: var(--color-primary);
 	}
 
 	.feature-info {
@@ -423,19 +445,19 @@
 		bottom: 130%;
 		left: 50%;
 		transform: translateX(-50%);
-		background: rgba(17, 24, 39, 0.95);
+		background: var(--gray-900);
 		color: white;
 		padding: var(--space-3) var(--space-4);
-		border-radius: var(--radius-lg);
+		border-radius: var(--radius-xl);
 		font-size: var(--font-size-sm);
 		white-space: nowrap;
 		z-index: 100;
 		pointer-events: none;
-		backdrop-filter: blur(8px);
-		box-shadow:
-			0 20px 25px -5px rgba(0, 0, 0, 0.1),
-			0 10px 10px -5px rgba(0, 0, 0, 0.04);
+		backdrop-filter: blur(12px);
+		box-shadow: var(--shadow-xl);
 		border: 1px solid rgba(255, 255, 255, 0.1);
+		min-width: 160px;
+		text-align: center;
 	}
 
 	.feature-info::after {
@@ -445,7 +467,7 @@
 		left: 50%;
 		transform: translateX(-50%);
 		border: 6px solid transparent;
-		border-top-color: rgba(17, 24, 39, 0.95);
+		border-top-color: var(--gray-900);
 	}
 
 	.feature-dot:hover .feature-info {
@@ -548,19 +570,20 @@
 		font-weight: 500;
 	}
 
-	@media (max-width: 1024px) {
+	@media (max-width: 1200px) {
 		.matrix-wrapper {
-			grid-template-columns: 60px 500px;
-			grid-template-rows: 500px 60px;
+			grid-template-columns: 100px minmax(500px, 700px);
+			grid-template-rows: minmax(500px, 700px) 100px;
 		}
 
 		.quadrant-label {
-			min-width: 120px;
+			min-width: 140px;
+			max-width: 180px;
 			padding: var(--space-3) var(--space-4);
 		}
 
 		.legend-items {
-			grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+			grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
 		}
 	}
 

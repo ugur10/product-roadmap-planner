@@ -16,35 +16,79 @@
 		}
 	}
 
-	function getPriorityColor(priority: Feature['priority']): string {
+	function getPriorityStyle(priority: Feature['priority']): { background: string; color: string; gradient: string } {
 		switch (priority) {
 			case 'critical':
-				return 'var(--color-danger)';
+				return {
+					background: 'var(--color-danger-light)',
+					color: 'var(--color-danger)',
+					gradient: 'var(--gradient-danger)'
+				};
 			case 'high':
-				return 'var(--color-warning)';
+				return {
+					background: 'var(--amber-100)',
+					color: 'var(--amber-700)',
+					gradient: 'var(--gradient-warning)'
+				};
 			case 'medium':
-				return 'var(--color-primary)';
+				return {
+					background: 'var(--color-primary-light)',
+					color: 'var(--color-primary)',
+					gradient: 'var(--gradient-primary)'
+				};
 			case 'low':
-				return 'var(--color-success)';
+				return {
+					background: 'var(--color-success-light)',
+					color: 'var(--color-success)',
+					gradient: 'var(--gradient-success)'
+				};
 			default:
-				return 'var(--color-text-muted)';
+				return {
+					background: 'var(--gray-100)',
+					color: 'var(--color-text-muted)',
+					gradient: 'var(--gradient-subtle)'
+				};
 		}
 	}
 
-	function getStatusColor(status: Feature['status']): string {
+	function getStatusStyle(status: Feature['status']): { background: string; color: string; icon: string } {
 		switch (status) {
 			case 'completed':
-				return 'var(--color-success)';
+				return {
+					background: 'var(--color-success-light)',
+					color: 'var(--color-success)',
+					icon: '✓'
+				};
 			case 'in_progress':
-				return 'var(--color-primary)';
+				return {
+					background: 'var(--color-primary-light)',
+					color: 'var(--color-primary)',
+					icon: '⚡'
+				};
 			case 'testing':
-				return 'var(--color-warning)';
+				return {
+					background: 'var(--color-info-light)',
+					color: 'var(--color-info)',
+					icon: '🧪'
+				};
 			case 'planning':
-				return 'var(--color-text-muted)';
+				return {
+					background: 'var(--gray-100)',
+					color: 'var(--color-text-muted)',
+					icon: '📋'
+				};
 			case 'on_hold':
-				return 'var(--color-danger)';
+				return {
+					background: 'var(--color-danger-light)',
+					color: 'var(--color-danger)',
+					icon: '⏸'
+				};
 			default:
-				return 'var(--color-text-muted)';
+				return {
+					background: 'var(--gray-100)',
+					color: 'var(--color-text-muted)',
+					icon: '•'
+				};
 		}
 	}
 
@@ -89,19 +133,17 @@
 			</button>
 			<div class="badges">
 				<span
-					class="badge priority"
-					style="background-color: {getPriorityColor(feature.priority)}20; color: {getPriorityColor(
-						feature.priority
-					)}"
+					class="badge priority-badge"
+					style="background: {getPriorityStyle(feature.priority).background}; color: {getPriorityStyle(feature.priority).color}; border: 1px solid {getPriorityStyle(feature.priority).color}25;"
 				>
+					<span class="badge-dot" style="background: {getPriorityStyle(feature.priority).gradient};"></span>
 					{formatPriority(feature.priority)}
 				</span>
 				<span
-					class="badge status"
-					style="background-color: {getStatusColor(feature.status)}20; color: {getStatusColor(
-						feature.status
-					)}"
+					class="badge status-badge"
+					style="background: {getStatusStyle(feature.status).background}; color: {getStatusStyle(feature.status).color}; border: 1px solid {getStatusStyle(feature.status).color}25;"
 				>
+					<span class="badge-icon">{getStatusStyle(feature.status).icon}</span>
 					{formatStatus(feature.status)}
 				</span>
 			</div>
@@ -177,17 +219,34 @@
 
 <style>
 	.feature-card {
-		background: white;
-		border: 1px solid var(--gray-200);
-		border-radius: var(--radius-lg);
+		background: var(--color-surface);
+		border: 1px solid var(--color-border-subtle);
+		border-radius: var(--radius-xl);
 		box-shadow: var(--shadow-sm);
-		transition: all 0.2s;
+		transition: all var(--duration-300) cubic-bezier(0.4, 0, 0.2, 1);
 		overflow: hidden;
+		position: relative;
+	}
+
+	.feature-card::before {
+		content: '';
+		position: absolute;
+		inset: 0;
+		background: var(--gradient-subtle);
+		opacity: 0;
+		transition: opacity var(--duration-300) ease;
+		pointer-events: none;
+		z-index: 0;
 	}
 
 	.feature-card:hover {
-		box-shadow: var(--shadow-md);
-		border-color: var(--gray-300);
+		transform: translateY(-2px);
+		box-shadow: var(--shadow-lg);
+		border-color: var(--color-border);
+	}
+
+	.feature-card:hover::before {
+		opacity: 0.5;
 	}
 
 	.feature-card.due-soon {
@@ -202,8 +261,10 @@
 		display: flex;
 		justify-content: space-between;
 		align-items: flex-start;
-		padding: var(--space-4);
-		border-bottom: 1px solid var(--gray-100);
+		padding: var(--space-5);
+		border-bottom: 1px solid var(--color-border-subtle);
+		position: relative;
+		z-index: 1;
 	}
 
 	.card-title {
@@ -238,13 +299,57 @@
 	}
 
 	.badge {
-		display: inline-block;
-		padding: var(--space-1) var(--space-2);
-		border-radius: var(--radius);
+		display: inline-flex;
+		align-items: center;
+		gap: var(--space-1-5);
+		padding: var(--space-1-5) var(--space-3);
+		border-radius: var(--radius-full);
 		font-size: var(--font-size-xs);
-		font-weight: 500;
+		font-weight: var(--font-weight-semibold);
 		text-transform: uppercase;
-		letter-spacing: 0.05em;
+		letter-spacing: 0.025em;
+		transition: all var(--duration-200) ease;
+		box-shadow: var(--shadow-xs);
+		backdrop-filter: blur(4px);
+	}
+
+	.badge:hover {
+		transform: translateY(-1px);
+		box-shadow: var(--shadow-sm);
+	}
+
+	.badge-dot {
+		width: 6px;
+		height: 6px;
+		border-radius: var(--radius-full);
+		flex-shrink: 0;
+	}
+
+	.badge-icon {
+		font-size: 10px;
+		line-height: 1;
+		flex-shrink: 0;
+	}
+
+	.priority-badge {
+		position: relative;
+		overflow: hidden;
+	}
+
+	.priority-badge::before {
+		content: '';
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		background: inherit;
+		opacity: 0.1;
+		border-radius: inherit;
+	}
+
+	.status-badge {
+		backdrop-filter: blur(8px);
 	}
 
 	.card-actions {
@@ -278,7 +383,9 @@
 	}
 
 	.card-body {
-		padding: var(--space-4);
+		padding: var(--space-5);
+		position: relative;
+		z-index: 1;
 	}
 
 	.description {
@@ -323,11 +430,13 @@
 	}
 
 	.card-footer {
-		padding: var(--space-3) var(--space-4);
-		background: var(--gray-50);
-		border-top: 1px solid var(--gray-100);
+		padding: var(--space-3) var(--space-5);
+		background: var(--gradient-subtle);
+		border-top: 1px solid var(--color-border-subtle);
 		font-size: var(--font-size-xs);
-		color: var(--color-text-muted);
+		color: var(--color-text-subtle);
+		position: relative;
+		z-index: 1;
 	}
 
 	@media (max-width: 640px) {
