@@ -20,7 +20,7 @@ describe('Features Store', () => {
 				category: 'frontend' as const,
 				estimatedHours: 10,
 				assignee: 'John Doe',
-				matrix: { impact: 4, effort: 2 }
+				matrix: { impact: 4 as const, effort: 2 as const }
 			};
 
 			const newFeature = featuresStore.addFeature(featureData);
@@ -40,7 +40,7 @@ describe('Features Store', () => {
 				status: 'planning' as const,
 				category: 'frontend' as const,
 				estimatedHours: 10,
-				matrix: { impact: 4, effort: 2 }
+				matrix: { impact: 4 as const, effort: 2 as const }
 			};
 
 			featuresStore.addFeature(featureData);

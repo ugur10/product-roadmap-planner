@@ -20,6 +20,7 @@
 					<a href="/" class="nav-link">Dashboard</a>
 					<a href="/matrix" class="nav-link">Matrix</a>
 					<a href="/timeline" class="nav-link">Timeline</a>
+					<a href="/progress" class="nav-link">Progress</a>
 				</div>
 			</nav>
 		</div>
