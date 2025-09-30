@@ -48,8 +48,16 @@
 {:else}
 	<div class="page">
 		<header class="page-header">
-			<h1>Dashboard</h1>
-			<p class="text-muted">Manage your product roadmap and feature priorities</p>
+			<div class="header-content-main">
+				<div>
+					<h1 class="page-title">Dashboard</h1>
+					<p class="page-subtitle">Manage your product roadmap and feature priorities</p>
+				</div>
+				<button class="btn btn-primary" onclick={handleAddFeature}>
+					<span>✨</span>
+					Add Feature
+				</button>
+			</div>
 		</header>
 
 		<div class="dashboard-grid">
@@ -74,9 +82,14 @@
 			<div class="card">
 				<h3>Quick Actions</h3>
 				<div class="actions">
-					<button class="btn btn-primary" onclick={handleAddFeature}>Add Feature</button>
-					<button class="btn btn-secondary" onclick={handleViewAll}>View All Features</button>
-					<button class="btn btn-secondary" disabled>Export Data</button>
+					<button class="btn btn-secondary" onclick={handleViewAll}>
+						<span>📋</span>
+						View All Features
+					</button>
+					<button class="btn btn-secondary" disabled>
+						<span>💾</span>
+						Export Data
+					</button>
 				</div>
 			</div>
 
@@ -124,8 +137,28 @@
 		margin-bottom: var(--space-8);
 	}
 
-	.page-header h1 {
+	.header-content-main {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: var(--space-4);
+	}
+
+	.page-title {
+		font-size: var(--font-size-3xl);
+		font-weight: 700;
+		background: var(--gradient-primary);
+		-webkit-background-clip: text;
+		-webkit-text-fill-color: transparent;
+		background-clip: text;
 		margin-bottom: var(--space-2);
+		letter-spacing: -0.02em;
+	}
+
+	.page-subtitle {
+		color: var(--color-text-muted);
+		font-size: var(--font-size-base);
+		margin: 0;
 	}
 
 	.dashboard-grid {
@@ -147,21 +180,51 @@
 
 	.stat {
 		text-align: center;
-		padding: var(--space-3);
-		background: var(--gray-50);
-		border-radius: var(--radius);
+		padding: var(--space-4);
+		background: linear-gradient(135deg, var(--gray-50) 0%, white 100%);
+		border-radius: var(--radius-lg);
+		border: 1px solid var(--color-border-subtle);
+		transition: all var(--duration-200);
+		position: relative;
+		overflow: hidden;
+	}
+
+	.stat::before {
+		content: '';
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		height: 3px;
+		background: var(--gradient-primary);
+		opacity: 0;
+		transition: opacity var(--duration-200);
+	}
+
+	.stat:hover {
+		transform: translateY(-2px);
+		box-shadow: var(--shadow-md);
+	}
+
+	.stat:hover::before {
+		opacity: 1;
 	}
 
 	.stat-value {
-		font-size: var(--font-size-2xl);
-		font-weight: 600;
-		color: var(--color-primary);
+		font-size: var(--font-size-3xl);
+		font-weight: 700;
+		background: var(--gradient-primary);
+		-webkit-background-clip: text;
+		-webkit-text-fill-color: transparent;
+		background-clip: text;
 		margin-bottom: var(--space-2);
+		line-height: 1;
 	}
 
 	.stat-label {
 		font-size: var(--font-size-sm);
 		color: var(--color-text-muted);
+		font-weight: 500;
 	}
 
 	.actions {
@@ -199,10 +262,18 @@
 	}
 
 	.feature-item {
-		padding: var(--space-3);
-		border: 1px solid var(--gray-200);
-		border-radius: var(--radius);
-		background: var(--gray-50);
+		padding: var(--space-4);
+		border: 1px solid var(--color-border-subtle);
+		border-radius: var(--radius-lg);
+		background: linear-gradient(135deg, white 0%, var(--gray-50) 100%);
+		transition: all var(--duration-200);
+		cursor: pointer;
+	}
+
+	.feature-item:hover {
+		transform: translateX(4px);
+		box-shadow: var(--shadow-md);
+		border-color: var(--color-border);
 	}
 
 	.feature-info h4 {
@@ -225,13 +296,17 @@
 	}
 
 	.badge {
-		display: inline-block;
-		padding: var(--space-1) var(--space-2);
-		border-radius: var(--radius);
+		display: inline-flex;
+		align-items: center;
+		gap: var(--space-1);
+		padding: var(--space-1-5) var(--space-3);
+		border-radius: var(--radius-full);
 		font-size: var(--font-size-xs);
-		font-weight: 500;
+		font-weight: 600;
 		text-transform: uppercase;
 		letter-spacing: 0.05em;
+		box-shadow: var(--shadow-xs);
+		border: 1px solid rgba(0, 0, 0, 0.05);
 	}
 
 	.badge.priority-critical {
@@ -281,23 +356,49 @@
 
 	.empty-state {
 		text-align: center;
-		padding: var(--space-8) var(--space-4);
+		padding: var(--space-12) var(--space-4);
+		background: linear-gradient(135deg, var(--indigo-50) 0%, var(--violet-50) 100%);
+		border-radius: var(--radius-2xl);
+		animation: fadeIn var(--duration-500) ease-out;
+	}
+
+	@keyframes fadeIn {
+		from {
+			opacity: 0;
+			transform: scale(0.95);
+		}
+		to {
+			opacity: 1;
+			transform: scale(1);
+		}
 	}
 
 	.empty-icon {
-		font-size: 3rem;
+		font-size: 4rem;
 		margin-bottom: var(--space-4);
-		opacity: 0.5;
+		animation: float 3s ease-in-out infinite;
+		display: inline-block;
+	}
+
+	@keyframes float {
+		0%, 100% {
+			transform: translateY(0);
+		}
+		50% {
+			transform: translateY(-8px);
+		}
 	}
 
 	.empty-text {
-		font-size: var(--font-size-lg);
-		font-weight: 500;
+		font-size: var(--font-size-xl);
+		font-weight: 600;
 		margin-bottom: var(--space-2);
+		color: var(--gray-900);
 	}
 
 	.empty-state .text-muted {
 		margin-bottom: var(--space-6);
+		font-size: var(--font-size-base);
 	}
 
 	@media (min-width: 768px) {

@@ -887,14 +887,6 @@
 		border-color: rgba(239, 68, 68, 0.2);
 	}
 
-	.summary-stat strong {
-		display: block;
-		font-size: var(--font-size-xl);
-		font-weight: 700;
-		color: var(--color-text);
-		margin-bottom: var(--space-1);
-	}
-
 	.summary-narrative {
 		grid-column: 1 / -1;
 		padding: var(--space-4);

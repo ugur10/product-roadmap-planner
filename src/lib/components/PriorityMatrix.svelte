@@ -117,17 +117,18 @@
 	</div>
 
 	<div class="matrix-wrapper">
-		<!-- Y-axis label -->
-		<div class="axis-label y-axis">
-			<span>Impact</span>
-			<div class="axis-scale">
-				<span>High</span>
-				<span>Low</span>
+		<div class="matrix-container-inner">
+			<!-- Y-axis label -->
+			<div class="axis-label y-axis">
+				<span>Impact</span>
+				<div class="axis-scale">
+					<span>High</span>
+					<span>Low</span>
+				</div>
 			</div>
-		</div>
 
-		<!-- Main matrix -->
-		<div class="matrix" bind:this={matrixElement}>
+			<!-- Main matrix -->
+			<div class="matrix" bind:this={matrixElement}>
 			<!-- Grid lines -->
 			<div class="grid-lines">
 				<!-- Vertical lines -->
@@ -184,6 +185,7 @@
 					</div>
 				</div>
 			{/each}
+			</div>
 		</div>
 
 		<!-- X-axis label -->
@@ -243,72 +245,78 @@
 	}
 
 	.matrix-wrapper {
-		display: grid;
-		grid-template-columns: 140px minmax(600px, 800px);
-		grid-template-rows: minmax(600px, 800px) 140px;
-		gap: var(--space-8);
+		display: flex;
+		flex-direction: column;
+		gap: 0;
 		margin: 0 auto;
-		justify-content: center;
-		width: 100%;
-		max-width: 1200px;
-		padding: var(--space-8);
+		width: fit-content;
+		max-width: 100%;
+		padding: var(--space-4);
+	}
+
+	.matrix-container-inner {
+		position: relative;
+		display: flex;
+		align-items: center;
+		gap: var(--space-3);
 	}
 
 	.axis-label {
-		display: flex;
-		align-items: center;
-		justify-content: center;
 		font-weight: var(--font-weight-bold);
 		color: var(--color-text);
-		font-size: var(--font-size-lg);
-		letter-spacing: -0.025em;
-		position: relative;
+		font-size: var(--font-size-base);
+		letter-spacing: -0.01em;
 	}
 
 	.y-axis {
 		writing-mode: vertical-rl;
 		text-orientation: mixed;
+		display: flex;
 		flex-direction: column;
-		position: relative;
+		align-items: center;
+		justify-content: center;
+		gap: var(--space-2);
+		height: 700px;
 	}
 
 	.x-axis {
-		grid-column: 2;
-		position: relative;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: var(--space-2);
+		width: 700px;
+		margin-top: var(--space-3);
 	}
 
 	.axis-scale {
-		position: absolute;
 		display: flex;
-		font-size: var(--font-size-sm);
-		color: var(--color-text);
+		font-size: var(--font-size-xs);
+		color: var(--color-text-muted);
 		font-weight: var(--font-weight-semibold);
 		text-transform: uppercase;
 		letter-spacing: 0.05em;
 	}
 
 	.axis-scale.horizontal {
-		bottom: -40px;
-		left: 0;
-		right: 0;
+		width: 100%;
 		justify-content: space-between;
 		padding: 0 var(--space-2);
 	}
 
 	.y-axis .axis-scale {
 		writing-mode: horizontal-tb;
-		right: -60px;
-		top: 0;
-		bottom: 0;
 		flex-direction: column;
 		justify-content: space-between;
+		height: 100%;
 		padding: var(--space-2) 0;
 	}
 
 	.matrix {
 		position: relative;
+		width: 700px;
+		height: 700px;
 		background: linear-gradient(135deg, #fafafa 0%, #ffffff 100%);
-		border: 1px solid var(--gray-200);
+		border: 2px solid var(--gray-300);
 		border-radius: var(--radius-xl);
 		overflow: hidden;
 		user-select: none;
@@ -570,10 +578,18 @@
 		font-weight: 500;
 	}
 
-	@media (max-width: 1200px) {
-		.matrix-wrapper {
-			grid-template-columns: 100px minmax(500px, 700px);
-			grid-template-rows: minmax(500px, 700px) 100px;
+	@media (max-width: 1024px) {
+		.matrix {
+			width: 600px;
+			height: 600px;
+		}
+
+		.y-axis {
+			height: 600px;
+		}
+
+		.x-axis {
+			width: 600px;
 		}
 
 		.quadrant-label {
@@ -592,14 +608,25 @@
 			gap: var(--space-6);
 		}
 
+		.matrix {
+			width: 500px;
+			height: 500px;
+		}
+
+		.y-axis {
+			height: 500px;
+		}
+
+		.x-axis {
+			width: 500px;
+		}
+
 		.matrix-wrapper {
-			grid-template-columns: 50px 400px;
-			grid-template-rows: 400px 50px;
-			gap: var(--space-3);
+			padding: var(--space-3);
 		}
 
 		.axis-label {
-			font-size: var(--font-size-xs);
+			font-size: var(--font-size-sm);
 		}
 
 		.quadrant-label {
@@ -634,21 +661,54 @@
 		}
 	}
 
-	@media (max-width: 480px) {
-		.matrix-wrapper {
-			grid-template-columns: 40px 320px;
-			grid-template-rows: 320px 40px;
-			gap: var(--space-2);
+	@media (max-width: 600px) {
+		.matrix {
+			width: 400px;
+			height: 400px;
+		}
+
+		.y-axis {
+			height: 400px;
+			font-size: var(--font-size-sm);
+		}
+
+		.x-axis {
+			width: 400px;
+			font-size: var(--font-size-sm);
 		}
 
 		.quadrant-label {
 			padding: var(--space-2);
 			min-width: 80px;
+			font-size: var(--font-size-xs);
 		}
 
 		.feature-dot {
 			width: 28px;
 			height: 28px;
+		}
+	}
+
+	@media (max-width: 480px) {
+		.matrix {
+			width: 320px;
+			height: 320px;
+		}
+
+		.y-axis {
+			height: 320px;
+		}
+
+		.x-axis {
+			width: 320px;
+		}
+
+		.matrix-wrapper {
+			padding: var(--space-2);
+		}
+
+		.matrix-container-inner {
+			gap: var(--space-2);
 		}
 	}
 </style>
